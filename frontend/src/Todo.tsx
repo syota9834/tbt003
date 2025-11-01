@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 interface TodoItem {
   id: number;        // Todoを一意に識別するID (数値)
   title: string;     // Todoの内容を示すテキスト (文字列)
+  description: string;
   completed: boolean; // Todoが完了したかどうかを示すフラグ (真偽値)
 }
 
@@ -24,6 +25,7 @@ function Todo() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   // テキスト入力欄の文字列を管理するための状態。初期値は空文字列''。
   const [input, setInput] = useState('');
+  const [test, setInputtest] = useState<[]>([]);
 
   // --- 関数定義 ---
 
@@ -117,6 +119,32 @@ function Todo() {
     }
   };
 
+  /**
+   * Todoアイテムの完了状態を切り替える関数
+   * @param id - 状態を切り替えたいTodoのID
+   * @param completed - 新しい完了状態
+   */
+  const toggleTodoCompleted = async (id: number, completed: boolean) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/todos/${id}`, {
+        method: 'PUT', // HTTPメソッドをPUTに指定（リソースの更新）
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed: completed }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const updatedTodo: TodoItem = await response.json();
+      setTodos(todos.map(todo => (todo.id === id ? updatedTodo : todo)));
+    } catch (error) {
+      console.error("Failed to update todo:", error);
+    }
+  };
+
   // --- 画面表示 (JSX) ---
   // このコンポーネントが画面にどう表示されるかを定義する部分
   // HTMLに似たJSXという構文で記述する
@@ -128,17 +156,20 @@ function Todo() {
             タスク入力
           </div>
           <div className="card-body">
-            <div className="input-group mb-3">
+            <div className="input-group">
               {/* テキスト入力欄 */}
-              <input
-                type="text"
-                className="form-control"
-                value={input} // 表示する値はinput状態変数を指定
-                // 文字が入力されるたびにsetInputが呼ばれ、input状態が更新される
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Add a new todo"
-              />
-              {/* 追加ボタン。クリックされるとaddTodo関数が実行される */}
+              <div className="col-4">
+                <input
+                  type="text"
+                  className="form-control"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="タスク名"
+                />
+              </div>
+              <div className="col-4">
+                <input type="text" className="form-control" value={input} placeholder="備考" />
+              </div>
               <button className="btn btn-primary" onClick={addTodo}>Add</button>
             </div>
           </div>
@@ -150,16 +181,16 @@ function Todo() {
             タスク
           </div>
           <div className="card-body">
-            {/* Todoリスト */}
+            {/* 未完了のTodoリスト */}
             <ul className="list-group">
-              {/* todos配列の中身を一つずつ取り出して<li>要素を生成する */}
-              {todos.map((todo) => (
-                // 各Todoアイテムには一意のkeyプロパティが必要（ここではtodo.idを使用）
+              {todos.filter(todo => !todo.completed).map((todo) => (
                 <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
-                  {/* Todoのテキスト内容を表示 */}
-                  {todo.title}
-                  {/* 削除ボタン。クリックされると、そのTodoのidを渡してremoveTodo関数が実行される */}
-                  <button className="btn btn-danger btn-sm" onClick={() => removeTodo(todo.id)}>Remove</button>
+                  {todo.title} - {todo.description}
+                  <div className="float-right">
+                    <button className="btn btn-primary btn-sm" onClick={() => toggleTodoCompleted(todo.id, !todo.completed)}>完了</button>
+                     &nbsp;
+                    <button className="btn btn-danger btn-sm" onClick={() => removeTodo(todo.id)}>削除</button>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -172,16 +203,16 @@ function Todo() {
             完了
           </div>
           <div className="card-body">
-            {/* Todoリスト */}
+            {/* 完了したTodoリスト */}
             <ul className="list-group">
-              {/* todos配列の中身を一つずつ取り出して<li>要素を生成する */}
-              {todos.map((todo) => (
-                // 各Todoアイテムには一意のkeyプロパティが必要（ここではtodo.idを使用）
+              {todos.filter(todo => todo.completed).map((todo) => (
                 <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
-                  {/* Todoのテキスト内容を表示 */}
-                  {todo.title}
-                  {/* 削除ボタン。クリックされると、そのTodoのidを渡してremoveTodo関数が実行される */}
-                  <button className="btn btn-danger btn-sm" onClick={() => removeTodo(todo.id)}>Remove</button>
+                    {todo.title} - {todo.description}
+                  <div className="float-right">
+                    <button className="btn btn-success btn-sm" onClick={() => toggleTodoCompleted(todo.id, !todo.completed)}>戻す</button>
+                    &nbsp;
+                    <button className="btn btn-danger btn-sm" onClick={() => removeTodo(todo.id)}>削除</button>
+                  </div>
                 </li>
               ))}
             </ul>

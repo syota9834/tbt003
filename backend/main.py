@@ -64,7 +64,10 @@ def create_todo(todo: schemas.TodoCreate, db: Session = Depends(get_db)):
 
     - **todo**: 作成するTodoのタイトルと説明。
     """
-    db_todo = models.Todo(title=todo.title, description=todo.description)
+    db_todo = models.Todo(
+        title=todo.title,
+        description=todo.description,
+        )
     db.add(db_todo) # データベースに追加
     db.commit() # 変更をコミット
     db.refresh(db_todo) # データベースから最新の情報を取得（idなどが設定される）
