@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Query, Path
 from sqlalchemy.orm import Session
 from typing import List, Union
-# 必要なモジュールをインポート
 import models, schemas
 from database import SessionLocal, engine, get_db
+from datetime import datetime
 # --- CORS設定 ---
 # フロントエンド（例: http://localhost:5173）からのリクエストを許可するために必要
 from fastapi.middleware.cors import CORSMiddleware
@@ -67,6 +67,7 @@ def create_todo(todo: schemas.TodoCreate, db: Session = Depends(get_db)):
     db_todo = models.Todo(
         title=todo.title,
         description=todo.description,
+        date=datetime.today(),
         )
     db.add(db_todo) # データベースに追加
     db.commit() # 変更をコミット
@@ -77,7 +78,7 @@ def create_todo(todo: schemas.TodoCreate, db: Session = Depends(get_db)):
     "/todos/",
     response_model=List[schemas.Todo], # Todoのリストを返す
     tags=["Todos"],
-    summary="全てのTodoを取得",
+    summary="今日のTodoを取得",
 )
 def read_todos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """
@@ -86,7 +87,9 @@ def read_todos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     - **skip**: 取得を開始するオフセット。
     - **limit**: 取得するTodoの最大数。
     """
-    todos = db.query(models.Todo).offset(skip).limit(limit).all()
+    target_date = datetime.today().date()
+    todos = db.query(models.Todo).filter(models.Todo.date == target_date).offset(skip).limit(limit).all()
+
     return todos
 
 @app.get(
@@ -105,6 +108,18 @@ def read_todo(todo_id: int, db: Session = Depends(get_db)):
     if todo is None:
         raise HTTPException(status_code=404, detail="Todo not found")
     return todo
+
+
+@app.get(
+    "/logs/",
+    tags=["Logs"],
+    summary="過去のTodoを取得",
+)
+def log_todo(db: Session = Depends(get_db)):
+    target_date = datetime.today().date()
+    logs = db.query(models.Todo).filter(models.Todo.date != target_date).all()
+    return logs
+
 
 @app.put(
     "/todos/{todo_id}",

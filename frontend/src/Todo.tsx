@@ -9,6 +9,11 @@ interface TodoItem {
   completed: boolean; // Todoが完了したかどうかを示すフラグ (真偽値)
 }
 
+const TodoItemTest = {
+  title: "",
+  description: ""
+}
+
 // FastAPIバックエンドのベースURL
 // FastAPIアプリケーションが動作しているアドレスに合わせて変更してください
 const API_BASE_URL = 'http://localhost:8000';
@@ -24,8 +29,7 @@ function Todo() {
   // Todoリストを管理するための状態。初期値は空の配列[]。型はTodoItem[]。
   const [todos, setTodos] = useState<TodoItem[]>([]);
   // テキスト入力欄の文字列を管理するための状態。初期値は空文字列''。
-  const [input, setInput] = useState('');
-  const [test, setInputtest] = useState<[]>([]);
+  const [inputTodos, setInputTodos] = useState(TodoItemTest);
 
   // --- 関数定義 ---
 
@@ -60,13 +64,27 @@ function Todo() {
     fetchTodos();
   }, []); // 空の依存配列[]は、コンポーネントのマウント時とアンマウント時にのみ実行されることを意味する
 
+
+
+  /**
+   * input項目に入力したら状態を更新する
+   */
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = e.target;
+      setInputTodos(prevFormData => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
   /**
    * 「Add」ボタンがクリックされたときに実行される関数
    * 新しいTodoアイテムをAPI経由で追加する
    */
-  const addTodo = async () => {
+  const addTodo = async (e: React.FormEvent) => {
+    e.preventDefault();  // submitをさせない
     // 入力欄が空、または空白のみの場合は何もしない
-    if (input.trim() === '') {
+    if (inputTodos.title.trim() === '') {
       return;
     }
     try {
@@ -77,7 +95,11 @@ function Todo() {
           'Content-Type': 'application/json', // リクエストボディの形式がJSONであることを指定
         },
         // 送信するデータ（新しいTodoのタイトルと完了状態）をJSON文字列に変換してボディに含める
-        body: JSON.stringify({ title: input, completed: false }),
+        body: JSON.stringify({
+          title: inputTodos.title,
+          description:inputTodos.description,
+          completed: false
+        }),
       });
       // HTTPレスポンスが成功したかチェック
       if (!response.ok) {
@@ -88,7 +110,8 @@ function Todo() {
       // 現在のTodoリストに新しいTodoを追加して状態を更新
       setTodos([...todos, newTodo]);
       // Todoを追加したら、入力欄を空にする
-      setInput('');
+      setInputTodos(TodoItemTest);
+
     } catch (error) {
       // API呼び出し中にエラーが発生した場合、コンソールにエラーメッセージを表示
       console.error("Failed to add todo:", error);
@@ -156,32 +179,31 @@ function Todo() {
             タスク入力
           </div>
           <div className="card-body">
-            <div className="input-group">
-              {/* テキスト入力欄 */}
-              <div className="col-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="タスク名"
-                />
+            <form>
+              <div className="input-group">
+                <div className="col-4">
+                  <input
+                    type="text" name="title" className="form-control" value={inputTodos.title}
+                    onChange={handleChange} placeholder="タスク名" />
+                </div>
+                <div className="col-4">
+                  <input
+                    type="text" className="form-control" name="description" value={inputTodos.description}
+                    onChange={handleChange} placeholder="備考" />
+                </div>
+                <button type="submit" className="btn btn-primary" onClick={addTodo}>Add</button>
               </div>
-              <div className="col-4">
-                <input type="text" className="form-control" value={input} placeholder="備考" />
-              </div>
-              <button className="btn btn-primary" onClick={addTodo}>Add</button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
+
       <div className="col-6">
         <div className="card">
           <div className="card-header text-bg-success">
             タスク
           </div>
           <div className="card-body">
-            {/* 未完了のTodoリスト */}
             <ul className="list-group">
               {todos.filter(todo => !todo.completed).map((todo) => (
                 <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
@@ -197,13 +219,13 @@ function Todo() {
           </div>
         </div>
       </div>
+
       <div className="col-6">
         <div className="card">
           <div className="card-header text-bg-primary">
             完了
           </div>
           <div className="card-body">
-            {/* 完了したTodoリスト */}
             <ul className="list-group">
               {todos.filter(todo => todo.completed).map((todo) => (
                 <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
@@ -219,6 +241,7 @@ function Todo() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

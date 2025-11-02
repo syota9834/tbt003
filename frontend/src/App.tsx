@@ -1,5 +1,4 @@
 import { Routes, Route, NavLink } from 'react-router-dom';
-import React from 'react';
 import Todo from "./Todo"
 import Log from "./Log"
 
