@@ -1,0 +1,189 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+* {
+  box-sizing: border-box;
+}
+
+.gantt-chart-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid #ccc;
+  font-family: Arial, sans-serif;
+}
+
+.gantt-header-sidebar-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.gantt-sidebar {
+  width: 150px; /* サイドバーの固定幅 */
+  flex-shrink: 0;
+  border-right: 1px solid #ccc;
+  background-color: $white;
+}
+
+.gantt-sidebar-header {
+  padding: 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+  background-color: $white;
+}
+
+.gantt-sidebar-row {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  height: 40px; /* 行の高さ */
+  display: flex;
+  align-items: center;
+}
+
+.gantt-main-content {
+  flex-grow: 1;
+  overflow-x: auto; /* メインコンテンツのみ横スクロールを可能にする */
+}
+
+.gantt-header {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-bottom: 1px solid #ccc;
+  background-color: $white;
+}
+
+.gantt-header-empty {
+  width: 150px; /* サイドバーの幅と合わせる */
+  flex-shrink: 0;
+  border-right: 1px solid #ccc; /* サイドバーと合わせる */
+}
+
+.gantt-row-empty {
+  width: 150px; /* サイドバーの幅と合わせる */
+  flex-shrink: 0;
+  border-right: 1px solid #ccc; /* サイドバーと合わせる */
+}
+
+.gantt-header-cell {
+  display: table-cell;
+  padding: 10px;
+  text-align: center;
+  border-right: 1px solid #ccc;
+}
+
+.gantt-rows-container {
+  position: relative;
+}
+
+.gantt-row {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-bottom: 1px solid #eee;
+  height: 40px; /* 行の高さ */
+  position: relative;
+}
+
+.gantt-cell {
+  display: table-cell;
+  border-right: 1px solid #eee;
+  position: relative;
+  cursor: pointer;
+}
+
+.gantt-cell:hover {
+  background-color: #f0f0f0;
+}
+
+.gantt-task {
+  position: absolute;
+  height: 80%;
+  top: 10%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px; /* パディングを減らす */
+  border-radius: 3px;
+  font-size: 0.8em;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  /* min-width: 50px; を削除 */
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  max-width: 90%;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group select {
+  width: calc(100% - 10px);
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.modal-actions button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-actions button[type="button"] {
+  background-color: #6c757d;
+  color: white;
+}

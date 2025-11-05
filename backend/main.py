@@ -25,6 +25,7 @@ origins = [
     "http://localhost",
     "http://localhost:5173", # React開発サーバーのURL
     "http://localhost:5174", # React開発サーバーのURL (ポートが5174の場合)
+    "*" # 開発用にすべてのオリジンを許可 (本番環境では具体的なオリジンを指定すること)
 ]
 
 app.add_middleware(

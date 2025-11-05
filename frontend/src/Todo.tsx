@@ -15,8 +15,8 @@ const TodoItemTest = {
 }
 
 // FastAPIバックエンドのベースURL
-// FastAPIアプリケーションが動作しているアドレスに合わせて変更してください
-const API_BASE_URL = 'http://localhost:8000';
+// 環境変数から取得。ViteではVITE_プレフィックスが必要。
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 // Todoコンポーネント（Todoリストアプリケーションの本体）を定義する関数
 function Todo() {
