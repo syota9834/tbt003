@@ -4,6 +4,7 @@ import GanttHeader from './GanttHeader';
 import GanttSidebar from './GanttSidebar';
 import GanttRow from './GanttRow';
 import TaskModal from './TaskModal';
+import EditModal from './EditModal';
 import { fromZonedTime, toZonedTime, format } from 'date-fns-tz';
 import './GanttChart.scss'; // スタイルシートを後で作成
 
@@ -23,35 +24,41 @@ const initialAssignees: Assignee[] = [
 ];
 
 const initialTasks: Task[] = [
-  { id: 't1', name: 'タスク1', assigneeId: '1', startDate: fromZonedTime('2025-11-02 09:00:00', timeZone), endDate: fromZonedTime('2025-11-02 17:00:00', timeZone) },
+  { id: 't1', name: 'タスク1', assigneeId: '1', startDate: fromZonedTime('2025-11-06 09:00:00', timeZone), endDate: fromZonedTime('2025-11-06 12:00:00', timeZone) },
   { id: 't2', name: 'タスク2', assigneeId: '2', startDate: fromZonedTime('2025-11-04 10:00:00', timeZone), endDate: fromZonedTime('2025-11-04 14:30:00', timeZone) },
-  { id: 't3', name: 'タスク3', assigneeId: '1', startDate: fromZonedTime('2025-11-04 13:00:00', timeZone), endDate: fromZonedTime('2025-11-04 18:00:00', timeZone) },
+  { id: 't3', name: 'タスク3', assigneeId: '3', startDate: fromZonedTime('2025-11-07 13:00:00', timeZone), endDate: fromZonedTime('2025-11-07 18:00:00', timeZone) },
 ];
 
-// 現在の週の月曜日を基準にタスク日付を調整するヘルパー関数
-const adjustTaskDatesToCurrentWeek = (tasks: Task[], startOfWeek: Date): Task[] => {
-  // initialTasksの基準日を2025年11月4日と仮定
-  const initialBaseDate = fromZonedTime('2025-11-04 00:00:00', timeZone);
 
-  return tasks.map(task => {
-    const taskStartDate = toZonedTime(task.startDate, timeZone);
-    const taskEndDate = toZonedTime(task.endDate, timeZone);
-
-    const dayDiffStart = Math.round((taskStartDate.getTime() - initialBaseDate.getTime()) / (1000 * 60 * 60 * 24));
-    const dayDiffEnd = Math.round((taskEndDate.getTime() - initialBaseDate.getTime()) / (1000 * 60 * 60 * 24));
-
-    const adjustedStartDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + dayDiffStart, taskStartDate.getHours(), taskStartDate.getMinutes());
-    const adjustedEndDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + dayDiffEnd, taskEndDate.getHours(), taskEndDate.getMinutes());
-    
-    return { ...task, startDate: fromZonedTime(adjustedStartDate, timeZone), endDate: fromZonedTime(adjustedEndDate, timeZone) };
-  });
-};
+/**
+ * 日付定数
+ */
+const today = toZonedTime(new Date(), timeZone);
+const systemDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+const endOfWeek = new Date(systemDate.getFullYear(), systemDate.getMonth(), systemDate.getDate() + 6);  // システム日付から１週間
 
 const GanttChart: React.FC = () => {
   const [assignees, setAssignees] = useState<Assignee[]>(initialAssignees);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAssigneeId, setSelectedAssigneeId] = useState<string | null>(null);
+
+  const handleOpenEditModal = (task: Task) => {
+    setSelectedTask(task);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedTask(null);
+  };
+
+  const handleUpdateTask = (updatedTask: Task) => {
+    setTasks(tasks.map(task => (task.id === updatedTask.id ? updatedTask : task)));
+    handleCloseEditModal();
+  };
 
   const handleAddTask = (newTask: Task) => {
     setTasks([...tasks, newTask]);
@@ -70,23 +77,18 @@ const GanttChart: React.FC = () => {
     setSelectedAssigneeId(null);
   };
 
-  // JSTで現在の日付を取得
-  const today = toZonedTime(new Date(), timeZone);
-  const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // システム日付
-  const endOfWeek = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate() + 6);  // システム日付から１週間
-
   const dates: Date[] = [];  // 日付ヘッダー
   const bgs: { [key: string]: string } = {};   // 辞書型の日付背景
   const bg_weekly: { [key: number]: string } = {
     0: "text-bg-danger",
-    1: "",
-    2: "",
-    3: "",
-    4: "",
-    5: "",
+    1: "text-bg-white",
+    2: "text-bg-white",
+    3: "text-bg-white",
+    4: "text-bg-white",
+    5: "text-bg-white",
     6: "text-bg-primary"
   };
-  let currentDate = new Date(startOfWeek);
+  let currentDate = new Date(systemDate);
   while (currentDate <= endOfWeek) {
     dates.push(new Date(currentDate));
     // 曜日を判定し、ヘッダー色を変える
@@ -94,11 +96,10 @@ const GanttChart: React.FC = () => {
     bgs[format(toZonedTime(currentDate, timeZone), 'yyyy-MM-dd', { timeZone })] = bg_weekly[day_weekly];
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  bgs[format(toZonedTime(startOfWeek, timeZone), 'yyyy-MM-dd', { timeZone })] = "text-bg-success";
+  bgs[format(toZonedTime(systemDate, timeZone), 'yyyy-MM-dd', { timeZone })] = "text-bg-success";
 
-  // 初期タスクの日付を現在の週に合わせて調整
-  const adjustedInitialTasks = adjustTaskDatesToCurrentWeek(initialTasks, startOfWeek);
-  const [tasks, setTasks] = useState<Task[]>(adjustedInitialTasks);
+  // タスクデータを表示用リストに格納
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
   return (
     <div className="gantt-chart-container">
@@ -114,6 +115,7 @@ const GanttChart: React.FC = () => {
                 tasks={tasks.filter(task => task.assigneeId === assignee.id)}
                 dates={dates}
                 onCellClick={handleOpenModal}
+                onTaskClick={handleOpenEditModal}
               />
             ))}
           </div>
@@ -126,6 +128,15 @@ const GanttChart: React.FC = () => {
           onAddTask={handleAddTask}
           initialDate={selectedDate}
           initialAssigneeId={selectedAssigneeId}
+          assignees={assignees}
+        />
+      )}
+      {isEditModalOpen && selectedTask && (
+        <EditModal
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          onUpdateTask={handleUpdateTask}
+          task={selectedTask}
           assignees={assignees}
         />
       )}

@@ -48,7 +48,7 @@ function Log(){
               </thead>
               <tbody>
                 {logs.map((todo) => (
-                <tr>
+                <tr key={todo.id}>
                   <td>{todo.date}</td>
                   <td>{todo.title}</td>
                   <td>{todo.description}</td>

@@ -11,9 +11,10 @@ interface GanttRowProps {
   tasks: Task[];
   dates: Date[];
   onCellClick: (date: Date, assigneeId: string) => void;
+  onTaskClick: (task: Task) => void;
 }
 
-const GanttRow: React.FC<GanttRowProps> = ({ assignee, tasks, dates, onCellClick }) => {
+const GanttRow: React.FC<GanttRowProps> = ({ assignee, tasks, dates, onCellClick, onTaskClick }) => {
   const getMinutesSinceStartOfDay = (date: Date) => {
     const zonedDate = toZonedTime(date, timeZone);
     return getHours(zonedDate) * 60 + getMinutes(zonedDate);
@@ -48,15 +49,17 @@ const GanttRow: React.FC<GanttRowProps> = ({ assignee, tasks, dates, onCellClick
 
                 const startMinutes = getMinutesSinceStartOfDay(effectiveStartDate);
                 const endMinutes = getMinutesSinceStartOfDay(effectiveEndDate);
+                const durationMinutes = endMinutes - startMinutes;
 
                 const left = (startMinutes / totalMinutesInDay) * 100;
-                const right = (1 - (endMinutes / totalMinutesInDay)) * 100;
+                const width = (durationMinutes / totalMinutesInDay) * 100;
 
                 return (
                   <GanttTask
                     key={task.id}
                     task={task}
-                    style={{ left: `${left}%`, right: `${right}%` }}
+                    style={{ left: `${left}%`, width: `${width}%` }}
+                    onClick={onTaskClick}
                   />
                 );
               })}
