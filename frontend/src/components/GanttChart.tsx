@@ -6,7 +6,8 @@ import GanttRow from './GanttRow';
 import TaskModal from './TaskModal';
 import EditModal from './EditModal';
 import { fromZonedTime, toZonedTime, format } from 'date-fns-tz';
-import './GanttChart.scss'; // スタイルシートを後で作成
+import { Box, Button, Paper, Typography } from '@mui/material';
+// import './GanttChart.scss'; // スタイルシートを後で作成
 
 const timeZone = 'Asia/Tokyo';
 
@@ -30,14 +31,13 @@ const initialTasks: Task[] = [
 ];
 
 
-/**
- * 日付定数
- */
-const today = toZonedTime(new Date(), timeZone);
-const systemDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-const endOfWeek = new Date(systemDate.getFullYear(), systemDate.getMonth(), systemDate.getDate() + 6);  // システム日付から１週間
+interface gantt {
+  targetDate: Date,
+  setTargetDate: (date: Date) => void,
+  dicHolidays: { [key: string]: any };
+}
 
-const GanttChart: React.FC = () => {
+const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) => {
   const [assignees, setAssignees] = useState<Assignee[]>(initialAssignees);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -77,70 +77,99 @@ const GanttChart: React.FC = () => {
     setSelectedAssigneeId(null);
   };
 
+  const startDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+  const endDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6);  // システム日付から１週間
+
   const dates: Date[] = [];  // 日付ヘッダー
-  const bgs: { [key: string]: string } = {};   // 辞書型の日付背景
-  const bg_weekly: { [key: number]: string } = {
-    0: "text-bg-danger",
-    1: "text-bg-white",
-    2: "text-bg-white",
-    3: "text-bg-white",
-    4: "text-bg-white",
-    5: "text-bg-white",
-    6: "text-bg-primary"
+  const bgs: { [key: string]: any } = {};   // 辞書型の日付背景
+  const bg_weekly: { [key: number]: any } = {
+    0: { backgroundColor: '#f8d7da', color: '#721c24' }, // Sunday
+    1: { backgroundColor: 'white', color: 'black' },
+    2: { backgroundColor: 'white', color: 'black' },
+    3: { backgroundColor: 'white', color: 'black' },
+    4: { backgroundColor: 'white', color: 'black' },
+    5: { backgroundColor: 'white', color: 'black' },
+    6: { backgroundColor: '#cfe2ff', color: '#084298' }  // Saturday
   };
-  let currentDate = new Date(systemDate);
-  while (currentDate <= endOfWeek) {
+  let currentDate = new Date(startDate);
+  while (currentDate <= endDate) {
     dates.push(new Date(currentDate));
     // 曜日を判定し、ヘッダー色を変える
     let day_weekly = currentDate.getDay();
-    bgs[format(toZonedTime(currentDate, timeZone), 'yyyy-MM-dd', { timeZone })] = bg_weekly[day_weekly];
+    let stringDate = format(toZonedTime(currentDate, timeZone), 'yyyy-MM-dd', { timeZone });
+    bgs[stringDate] = bg_weekly[day_weekly];
+
+    // 祝日は赤色にする
+    if(stringDate in dicHolidays){
+       bgs[stringDate] = dicHolidays[stringDate];
+    }
+
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  bgs[format(toZonedTime(systemDate, timeZone), 'yyyy-MM-dd', { timeZone })] = "text-bg-success";
+  // システム日付は緑色にする
+  bgs[format(toZonedTime(new Date(), timeZone), 'yyyy-MM-dd', { timeZone })] = { backgroundColor: '#d1e7dd', color: '#0f5132' };
 
   // タスクデータを表示用リストに格納
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
   return (
-    <div className="gantt-chart-container">
-      <div className="gantt-header-sidebar-wrapper">
-        <GanttSidebar assignees={assignees} />
-        <div className="gantt-main-content">
-          <GanttHeader dates={dates} bgs={bgs}/>
-          <div className="gantt-rows-container">
-            {assignees.map(assignee => (
-              <GanttRow
-                key={assignee.id}
-                assignee={assignee}
-                tasks={tasks.filter(task => task.assigneeId === assignee.id)}
-                dates={dates}
-                onCellClick={handleOpenModal}
-                onTaskClick={handleOpenEditModal}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      {isModalOpen && selectedDate && selectedAssigneeId && (
-        <TaskModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onAddTask={handleAddTask}
-          initialDate={selectedDate}
-          initialAssigneeId={selectedAssigneeId}
-          assignees={assignees}
-        />
-      )}
-      {isEditModalOpen && selectedTask && (
-        <EditModal
-          isOpen={isEditModalOpen}
-          onClose={handleCloseEditModal}
-          onUpdateTask={handleUpdateTask}
-          task={selectedTask}
-          assignees={assignees}
-        />
-      )}
-    </div>
+    <Box sx={{ flexGrow: 1}}>
+      <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
+            ＜＜
+          </Button>
+          <Button variant="outlined" sx={{ mx: 1 }} onClick={() => setTargetDate(new Date())}>
+            今日
+          </Button>
+          <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 7))}>
+            ＞＞
+          </Button>
+        </Box>
+      </Paper>
+
+      <Paper elevation={1} sx={{ p: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', border: '1px solid #ccc', fontFamily: 'Arial, sans-serif' }}>
+          <Box sx={{ display: 'flex', width: '100%' }}>
+            <GanttSidebar assignees={assignees} />
+            <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
+              <GanttHeader dates={dates} bgs={bgs} />
+              <Box sx={{ position: 'relative' }}>
+                {assignees.map(assignee => (
+                  <GanttRow
+                    key={assignee.id}
+                    assignee={assignee}
+                    tasks={tasks.filter(task => task.assigneeId === assignee.id)}
+                    dates={dates}
+                    onCellClick={handleOpenModal}
+                    onTaskClick={handleOpenEditModal}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Box>
+          {isModalOpen && selectedDate && selectedAssigneeId && (
+            <TaskModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              onAddTask={handleAddTask}
+              initialDate={selectedDate}
+              initialAssigneeId={selectedAssigneeId}
+              assignees={assignees}
+            />
+          )}
+          {isEditModalOpen && selectedTask && (
+            <EditModal
+              isOpen={isEditModalOpen}
+              onClose={handleCloseEditModal}
+              onUpdateTask={handleUpdateTask}
+              task={selectedTask}
+              assignees={assignees}
+            />
+          )}
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 

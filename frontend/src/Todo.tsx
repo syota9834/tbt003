@@ -1,5 +1,9 @@
 // Reactライブラリから、Reactの基本機能と「useState」（状態管理）、「useEffect」（副作用処理）フックをインポート
 import React, { useState, useEffect } from 'react';
+import { Box, TextField, Button, Typography, List, ListItem, ListItemText, IconButton, Paper, Grid, AppBar, Toolbar } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 // Todoアイテムのデータ構造を定義するTypeScriptのインターフェース
 interface TodoItem {
@@ -170,79 +174,87 @@ function Todo() {
 
   // --- 画面表示 (JSX) ---
   // このコンポーネントが画面にどう表示されるかを定義する部分
-  // HTMLに似たJSXという構文で記述する
   return (
-    <div className="row">
-      <div className="col-12">
-        <div className="card mb-4">
-          <div className="card-header">
-            タスク入力
-          </div>
-          <div className="card-body">
-            <form>
-              <div className="input-group">
-                <div className="col-4">
-                  <input
-                    type="text" name="title" className="form-control" value={inputTodos.title}
-                    onChange={handleChange} placeholder="タスク名" />
-                </div>
-                <div className="col-4">
-                  <input
-                    type="text" className="form-control" name="description" value={inputTodos.description}
-                    onChange={handleChange} placeholder="備考" />
-                </div>
-                <button type="submit" className="btn btn-primary" onClick={addTodo}>Add</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+    <Box sx={{ flexGrow: 1}}>
 
-      <div className="col-6">
-        <div className="card">
-          <div className="card-header text-bg-success">
-            タスク
-          </div>
-          <div className="card-body">
-            <ul className="list-group">
-              {todos.filter(todo => !todo.completed).map((todo) => (
-                <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
-                  {todo.title} - {todo.description}
-                  <div className="float-right">
-                    <button className="btn btn-primary btn-sm" onClick={() => toggleTodoCompleted(todo.id, !todo.completed)}>完了</button>
-                     &nbsp;
-                    <button className="btn btn-danger btn-sm" onClick={() => removeTodo(todo.id)}>削除</button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+      <Paper elevation={3} sx={{ p: 2, mb:2 }}>
+        <Typography variant="h6" gutterBottom>
+          タスク入力
+        </Typography>
+        <Box component="form" onSubmit={addTodo} sx={{ display: 'flex', gap: 2, mt: 2 }}>
+          <TextField
+            label="タスク名"
+            name="title"
+            value={inputTodos.title}
+            onChange={handleChange}
+            fullWidth
+            required
+          />
+          <TextField
+            label="備考"
+            name="description"
+            value={inputTodos.description}
+            onChange={handleChange}
+            fullWidth
+          />
+          <Button variant="contained" type="submit">
+            追加
+          </Button>
+        </Box>
+      </Paper>
 
-      <div className="col-6">
-        <div className="card">
-          <div className="card-header text-bg-primary">
-            完了
-          </div>
-          <div className="card-body">
-            <ul className="list-group">
-              {todos.filter(todo => todo.completed).map((todo) => (
-                <li key={todo.id} className="list-group-item d-flex justify-content-between align-items-center">
-                    {todo.title} - {todo.description}
-                  <div className="float-right">
-                    <button className="btn btn-success btn-sm" onClick={() => toggleTodoCompleted(todo.id, !todo.completed)}>戻す</button>
-                    &nbsp;
-                    <button className="btn btn-danger btn-sm" onClick={() => removeTodo(todo.id)}>削除</button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
 
-    </div>
+      <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+        <Typography variant="h6" gutterBottom sx={{ color: 'success.main' }}>
+          タスク
+        </Typography>
+        <List>
+          {todos.filter(todo => !todo.completed).map((todo) => (
+            <ListItem
+              key={todo.id}
+              secondaryAction={
+                <>
+                  <IconButton edge="end" aria-label="完了" onClick={() => toggleTodoCompleted(todo.id, !todo.completed)}>
+                    <CheckCircleOutlineIcon color="primary" />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="削除" onClick={() => removeTodo(todo.id)}>
+                    <DeleteIcon color="error" />
+                  </IconButton>
+                </>
+              }
+            >
+              <ListItemText primary={todo.title} secondary={todo.description} />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
+
+      <Paper elevation={3} sx={{ p: 2 }}>
+        <Typography variant="h6" gutterBottom sx={{ color: 'primary.main' }}>
+          完了
+        </Typography>
+        <List>
+          {todos.filter(todo => todo.completed).map((todo) => (
+            <ListItem
+              key={todo.id}
+              secondaryAction={
+                <>
+                  <IconButton edge="end" aria-label="戻す" onClick={() => toggleTodoCompleted(todo.id, !todo.completed)}>
+                    <RadioButtonUncheckedIcon color="success" />
+                  </IconButton>
+                  <IconButton edge="end" aria-label="削除" onClick={() => removeTodo(todo.id)}>
+                    <DeleteIcon color="error" />
+                  </IconButton>
+                </>
+              }
+            >
+              <ListItemText primary={todo.title} secondary={todo.description} />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
+
+    </Box>
   );
 }
 

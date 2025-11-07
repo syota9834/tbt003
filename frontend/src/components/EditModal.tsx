@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Task, Assignee } from './types';
 import { toZonedTime, fromZonedTime, format } from 'date-fns-tz';
+import { Modal, Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const timeZone = 'Asia/Tokyo';
 
@@ -51,64 +52,118 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, ta
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>タスク編集</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>タスク名</label>
-            <input
-              type="text"
-              value={taskName}
-              onChange={(e) => setTaskName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>担当者</label>
-            <select value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)} required>
+    <Modal open={isOpen} onClose={onClose}>
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      }}>
+        <Typography variant="h6" component="h2" gutterBottom>
+          タスク編集
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="taskName"
+            label="タスク名"
+            name="taskName"
+            autoFocus
+            value={taskName}
+            onChange={(e) => setTaskName(e.target.value)}
+          />
+          <FormControl fullWidth margin="normal" required>
+            <InputLabel id="assignee-label">担当者</InputLabel>
+            <Select
+              labelId="assignee-label"
+              id="assigneeId"
+              value={assigneeId}
+              label="担当者"
+              onChange={(e) => setAssigneeId(e.target.value as string)}
+            >
               {assignees.map(a => (
-                <option key={a.id} value={a.id}>{a.name}</option>
+                <MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>
               ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>開始日時</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              required
-            />
-            <input
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>終了日時</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              required
-            />
-            <input
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              required
-            />
-          </div>
-          <div className="modal-actions">
-            <button type="submit">更新</button>
-            <button type="button" onClick={onClose}>キャンセル</button>
-          </div>
-        </form>
-      </div>
-    </div>
+            </Select>
+          </FormControl>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="startDate"
+            label="開始日"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="startTime"
+            label="開始時刻"
+            type="time"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="endDate"
+            label="終了日"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="endTime"
+            label="終了時刻"
+            type="time"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            更新
+          </Button>
+          <Button
+            type="button"
+            fullWidth
+            variant="outlined"
+            onClick={onClose}
+          >
+            キャンセル
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
   );
 };
 

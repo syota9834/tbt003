@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Grid } from '@mui/material';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 interface TodoItem {
@@ -30,38 +31,40 @@ function Log(){
   }, []);
 
   return (
-    <div className="row justify-content-center">
-      <div className="col">
-        <div className="card">
-          <div className="card-header">
+    <Box sx={{ flexGrow: 1}}>
+        <Paper elevation={3} sx={{ p: 2 }}>
+          <Typography variant="h6" gutterBottom>
             過去の記録
-          </div>
-          <div className="card-body">
-            <table className="table table-bordered">
-              <thead className="table-primary">
-                <tr>
-                  <th>日付</th>
-                  <th>タスク名</th>
-                  <th>備考</th>
-                  <th>完了</th>
-                </tr>
-              </thead>
-              <tbody>
+          </Typography>
+          <TableContainer component={Paper} sx={{ mt: 2 }}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>日付</TableCell>
+                  <TableCell>タスク名</TableCell>
+                  <TableCell>備考</TableCell>
+                  <TableCell>完了</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {logs.map((todo) => (
-                <tr key={todo.id}>
-                  <td>{todo.date}</td>
-                  <td>{todo.title}</td>
-                  <td>{todo.description}</td>
-                  {todo.completed === false ? (<td>未完了</td>) : (<td>完了</td>)}
-                      
-                </tr>
+                  <TableRow
+                    key={todo.id}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {todo.date}
+                    </TableCell>
+                    <TableCell>{todo.title}</TableCell>
+                    <TableCell>{todo.description}</TableCell>
+                    <TableCell>{todo.completed ? "完了" : "未完了"}</TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+    </Box>
+  );
 }
 export default Log;

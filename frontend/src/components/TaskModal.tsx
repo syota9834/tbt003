@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Task, Assignee } from './types';
 import { toZonedTime, fromZonedTime, format } from 'date-fns-tz';
+import { Modal, Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
 const timeZone = 'Asia/Tokyo';
 
@@ -82,73 +83,122 @@ const TaskModal: React.FC<TaskModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>新しいタスクを追加</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="taskName">タスク名:</label>
-            <input
-              type="text"
-              id="taskName"
-              value={taskName}
-              onChange={(e) => setTaskName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="assignee">担当者:</label>
-            <select
+    <Modal open={isOpen} onClose={onClose}>
+      <Box sx={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      }}>
+        <Typography variant="h6" component="h2" gutterBottom>
+          新しいタスクを追加
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="taskName"
+            label="タスク名"
+            name="taskName"
+            autoFocus
+            value={taskName}
+            onChange={(e) => setTaskName(e.target.value)}
+          />
+          <FormControl fullWidth margin="normal" required>
+            <InputLabel id="assignee-label">担当者</InputLabel>
+            <Select
+              labelId="assignee-label"
               id="assignee"
               value={assigneeId}
-              onChange={(e) => setAssigneeId(e.target.value)}
+              label="担当者"
+              onChange={(e) => setAssigneeId(e.target.value as string)}
             >
               {assignees.map((assignee) => (
-                <option key={assignee.id} value={assignee.id}>
+                <MenuItem key={assignee.id} value={assignee.id}>
                   {assignee.name}
-                </option>
+                </MenuItem>
               ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label htmlFor="startDate">開始日:</label>
-            <input
-              type="date"
-              id="startDate"
-              value={formatDate(startDate)}
-              onChange={handleStartDateChange}
-            />
-            <input
-              type="time"
-              id="startTime"
-              value={formatTime(startDate)}
-              onChange={handleStartTimeChange}
-              step="1800" // 30分刻み
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="endDate">終了日:</label>
-            <input
-              type="date"
-              id="endDate"
-              value={formatDate(endDate)}
-              onChange={handleEndDateChange}
-            />
-            <input
-              type="time"
-              id="endTime"
-              value={formatTime(endDate)}
-              onChange={handleEndTimeChange}
-              step="1800" // 30分刻み
-            />
-          </div>
-          <div className="modal-actions">
-            <button type="submit">追加</button>
-            <button type="button" onClick={onClose}>キャンセル</button>
-          </div>
-        </form>
-      </div>
-    </div>
+            </Select>
+          </FormControl>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="startDate"
+            label="開始日"
+            type="date"
+            value={formatDate(startDate)}
+            onChange={handleStartDateChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="startTime"
+            label="開始時刻"
+            type="time"
+            value={formatTime(startDate)}
+            onChange={handleStartTimeChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{ step: 1800 }} // 30分刻み
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="endDate"
+            label="終了日"
+            type="date"
+            value={formatDate(endDate)}
+            onChange={handleEndDateChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="endTime"
+            label="終了時刻"
+            type="time"
+            value={formatTime(endDate)}
+            onChange={handleEndTimeChange}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{ step: 1800 }} // 30分刻み
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            追加
+          </Button>
+          <Button
+            type="button"
+            fullWidth
+            variant="outlined"
+            onClick={onClose}
+          >
+            キャンセル
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
   );
 };
 

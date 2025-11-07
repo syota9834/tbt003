@@ -1,18 +1,17 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-// BootstrapのCSS読み込みをコメントアウトし、SCSSで読み込むように変更
-// import 'bootstrap/dist/css/bootstrap.min.css';
-import './css/index.scss'
 import { BrowserRouter } from 'react-router-dom';
 import App from "./App"
+import { Container } from '@mui/material';
+import "./App.scss";
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <div className="container mt-5">
+      <Container maxWidth="lg" sx={{ mt: 5 }}>
         <App />
-      </div>
+      </Container>
     </BrowserRouter>
   </React.StrictMode>,
 )

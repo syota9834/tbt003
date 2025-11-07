@@ -1,8 +1,9 @@
 import React from 'react';
 import { Task, Assignee } from './types';
 import GanttTask from './GanttTask';
-import { toZonedTime, format } from 'date-fns-tz';
+import { toZonedTime } from 'date-fns-tz';
 import { getHours, getMinutes, startOfDay, endOfDay } from 'date-fns';
+import { Box } from '@mui/material';
 
 const timeZone = 'Asia/Tokyo';
 
@@ -23,15 +24,23 @@ const GanttRow: React.FC<GanttRowProps> = ({ assignee, tasks, dates, onCellClick
   const totalMinutesInDay = 24 * 60; // 1日の総分数
 
   return (
-    <div className="gantt-row">
+    <Box sx={{ display: 'flex', width: '100%', borderBottom: '1px solid #eee', height: '40px', position: 'relative' }}>
       {dates.map(date => {
         const cellStart = startOfDay(toZonedTime(date, timeZone));
         const cellEnd = endOfDay(toZonedTime(date, timeZone));
 
         return (
-          <div
+          <Box
             key={date.toISOString()}
-            className="gantt-cell"
+            sx={{
+              flex: 1,
+              borderRight: '1px solid #eee',
+              position: 'relative',
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: '#f0f0f0',
+              },
+            }}
             onClick={() => onCellClick(date, assignee.id)}
           >
             {tasks
@@ -63,10 +72,10 @@ const GanttRow: React.FC<GanttRowProps> = ({ assignee, tasks, dates, onCellClick
                   />
                 );
               })}
-          </div>
+          </Box>
         );
       })}
-    </div>
+    </Box>
   );
 };
 

@@ -1,45 +1,72 @@
 import { Routes, Route, NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import Todo from "./Todo"
 import Log from "./Log"
 import GanttChart from "./components/GanttChart";
+import { AppBar, Toolbar, Typography, Button, Grid } from '@mui/material';
 
 
 function App(){
-  return (
-  <div className="row">
-    <div className="col-12 mb-4">
-      {/* ナビゲーションメニュー */}
-      <nav className="card navbar navbar-expand bg-white">
-        <div className="container-fluid">
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <NavLink to="/" className="nav-link">予約管理</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/daily" className="nav-link">今日のタスク</NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/log" className="nav-link">過去のタスク</NavLink>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </div>
+  const [targetDate, setTargetDate] = useState(new Date());
+  const [dicHolidays, setDicHolidays] = useState<{ [key: string]: any }>({});   // 辞書型の日付背景
 
-    {/* ここにURLに応じたコンポーネントが表示される */}
-    <div className="col-12">
-      <Routes>
-        <Route path="/" element={<GanttChart />} />
-        <Route path="/daily" element={<Todo />} />
-        <Route path="/log" element={<Log />} />  
-      </Routes>
-    </div>
-  </div>
+  const handleSetTargetDate = (date: Date) => {
+    setTargetDate(date);
+  };
+
+  // 祝日の取得
+  const fetchHoliday = async () => {
+    try {
+      const response = await fetch("http://api.national-holidays.jp/all");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      const newHolidays: { [key: string]: any } = {};
+      for(const row of data){
+        let day = row["date"];
+        newHolidays[day] = { backgroundColor: "#f8d7da", color: "#721c24" };
+      }
+      setDicHolidays(newHolidays);
+    } catch (error) {
+      console.error("Failed to fetch todos:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHoliday();
+  }, []);
+
+  return (
+    <Grid container spacing={2}>
+        <AppBar position="static" color="default" elevation={1}>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              TBT
+            </Typography>
+            <Button component={NavLink} to="/" color="inherit">
+              予約管理
+            </Button>
+            <Button component={NavLink} to="/daily" color="inherit">
+              今日のタスク
+            </Button>
+            <Button component={NavLink} to="/log" color="inherit">
+              過去のタスク
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <Routes>
+          <Route path="/"
+            element={<GanttChart
+              targetDate={targetDate}
+              setTargetDate={handleSetTargetDate}
+              dicHolidays={dicHolidays}
+            />}
+          />
+          <Route path="/daily" element={<Todo />} />
+          <Route path="/log" element={<Log />} />
+        </Routes>
+    </Grid>
   );
 }
 

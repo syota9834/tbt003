@@ -1,5 +1,7 @@
 import React from 'react';
 import { Task } from './types';
+import { Box, Typography } from '@mui/material';
+
 interface GanttTaskProps {
   task: Task;
   style: React.CSSProperties;
@@ -13,14 +15,32 @@ const GanttTask: React.FC<GanttTaskProps> = ({ task, style, onClick }) => {
   };
 
   return (
-    <div
-      className="gantt-task"
-      style={style}
+    <Box
+      sx={{
+        position: 'absolute',
+        height: '80%',
+        paddingTop: "5px",
+        top: '10%',
+        backgroundColor: 'primary.main',
+        color: 'white',
+        alignItems: 'center',
+        lineHeight: 'normal',
+        borderRadius: '3px',
+        fontSize: '0.8em',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        display: 'block',
+        boxSizing: 'border-box',
+        ...style,
+      }}
       title={`${task.name} (${task.startDate.toLocaleTimeString()} - ${task.endDate.toLocaleTimeString()})`}
       onClick={handleClick}
     >
-      {task.name}
-    </div>
+      <Typography variant="body2" noWrap >
+        {task.name}
+      </Typography>
+    </Box>
   );
 };
 
