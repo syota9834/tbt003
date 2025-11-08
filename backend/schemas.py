@@ -16,7 +16,7 @@ class TodoUpdate(TodoBase):
     # 更新時は全てのフィールドをオプショナルにする
     title: Union[str, None] = None
     description: Union[str, None] = None
-    date: Union[date, None] = None
+    date: Union[datetime, None] = None
     completed: Union[bool, None] = None
 
 # APIが返すTodoアイテムのレスポンススキーマ
@@ -27,3 +27,14 @@ class Todo(TodoBase):
     # PydanticがSQLAlchemyモデルからデータを読み込むための設定
     class Config:
         from_attributes = True # from_attributes = True に変更
+
+class User(BaseModel):
+    id: int
+    UserName: Union[str, None] = None
+    name: Union[str, None] = None
+    DeleteFlg: bool
+
+class Task(BaseModel):
+    id: int
+    name: Union[str, None] = None
+    DeleteFlg: bool

@@ -168,3 +168,39 @@ def delete_todo(todo_id: int, db: Session = Depends(get_db)):
     db.delete(db_todo)
     db.commit()
     return {"message": "Todo deleted successfully"} # 204 No Content のため、実際にはボディは返されない
+
+@app.get(
+    "/user",
+    tags=["User"],
+    summary="ユーザーの一覧を取得",
+)
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    全てのUserを取得します。
+
+    - **skip**: 取得を開始するオフセット。
+    - **limit**: 取得するTodoの最大数。
+    """
+    todos = db.query(models.UserTBL).filter(
+        models.UserTBL.DeleteFlg == False
+    ).offset(skip).limit(limit).all()
+
+    return todos
+
+@app.get(
+    "/task",
+    tags=["Task"],
+    summary="タスクの一覧を取得",
+)
+def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    全てのTaskを取得します。
+
+    - **skip**: 取得を開始するオフセット。
+    - **limit**: 取得するTodoの最大数。
+    """
+    todos = db.query(models.TaskTBL).filter(
+        models.TaskTBL.DeleteFlg == False
+    ).offset(skip).limit(limit).all()
+
+    return todos

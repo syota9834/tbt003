@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Task, Assignee } from './types';
 import GanttHeader from './GanttHeader';
 import GanttSidebar from './GanttSidebar';
@@ -7,28 +7,10 @@ import TaskModal from './TaskModal';
 import EditModal from './EditModal';
 import { fromZonedTime, toZonedTime, format } from 'date-fns-tz';
 import { Box, Button, Paper, Typography } from '@mui/material';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 // import './GanttChart.scss'; // スタイルシートを後で作成
 
 const timeZone = 'Asia/Tokyo';
-
-const initialAssignees: Assignee[] = [
-  { id: '1', name: '担当者A' },
-  { id: '2', name: '担当者B' },
-  { id: '3', name: '担当者C' },
-  { id: '4', name: '担当者D' },
-  { id: '5', name: '担当者E' },
-  { id: '6', name: '担当者F' },
-  { id: '7', name: '担当者G' },
-  { id: '8', name: '担当者H' },
-  { id: '9', name: '担当者I' },
-  { id: '10', name: '担当者J' },
-];
-
-const initialTasks: Task[] = [
-  { id: 't1', name: 'タスク1', assigneeId: '1', startDate: fromZonedTime('2025-11-06 09:00:00', timeZone), endDate: fromZonedTime('2025-11-06 12:00:00', timeZone) },
-  { id: 't2', name: 'タスク2', assigneeId: '2', startDate: fromZonedTime('2025-11-04 10:00:00', timeZone), endDate: fromZonedTime('2025-11-04 14:30:00', timeZone) },
-  { id: 't3', name: 'タスク3', assigneeId: '3', startDate: fromZonedTime('2025-11-07 13:00:00', timeZone), endDate: fromZonedTime('2025-11-07 18:00:00', timeZone) },
-];
 
 
 interface gantt {
@@ -38,12 +20,39 @@ interface gantt {
 }
 
 const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) => {
-  const [assignees, setAssignees] = useState<Assignee[]>(initialAssignees);
+  const [assignees, setAssignees] = useState<Assignee[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAssigneeId, setSelectedAssigneeId] = useState<string | null>(null);
+
+  const getUserData = async () =>{
+    try {
+      const response = await fetch(`${API_BASE_URL}/user`);
+        if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setAssignees(data);
+    } catch (error) {
+      console.error("Failed to fetch todos:", error);
+    }
+  }
+
+  const getTaskData = async () =>{
+    try {
+      const response = await fetch(`${API_BASE_URL}/task`);
+        if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setTasks(data);
+    } catch (error) {
+      console.error("Failed to fetch todos:", error);
+    }
+  }
 
   const handleOpenEditModal = (task: Task) => {
     setSelectedTask(task);
@@ -109,8 +118,10 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   // システム日付は緑色にする
   bgs[format(toZonedTime(new Date(), timeZone), 'yyyy-MM-dd', { timeZone })] = { backgroundColor: '#d1e7dd', color: '#0f5132' };
 
-  // タスクデータを表示用リストに格納
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  useEffect(() => {
+    getUserData();
+    getTaskData();
+  }, []);
 
   return (
     <Box sx={{ flexGrow: 1}}>

@@ -24,6 +24,7 @@ const GanttTask: React.FC<GanttTaskProps> = ({ task, style, onClick }) => {
         backgroundColor: 'primary.main',
         color: 'white',
         alignItems: 'center',
+        textAlign: 'center',
         lineHeight: 'normal',
         borderRadius: '3px',
         fontSize: '0.8em',
@@ -34,7 +35,7 @@ const GanttTask: React.FC<GanttTaskProps> = ({ task, style, onClick }) => {
         boxSizing: 'border-box',
         ...style,
       }}
-      title={`${task.name} (${task.startDate.toLocaleTimeString()} - ${task.endDate.toLocaleTimeString()})`}
+      title={`${task.name} (${task.startDate} - ${task.endDate})`}
       onClick={handleClick}
     >
       <Typography variant="body2" noWrap >
