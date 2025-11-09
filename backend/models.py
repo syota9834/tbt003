@@ -28,8 +28,8 @@ class TaskTBL(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, default="")
-    startDate = Column(DateTime, default=None)
-    endDate = Column(DateTime, default=None)
+    startDate = Column(DateTime(timezone=True), default=None)
+    endDate = Column(DateTime(timezone=True), default=None)
     assigneeId = Column(Integer, ForeignKey("UserTBL.id"))
     DeleteFlg = Column(Boolean, default=False)
     LastModified = Column(DateTime, onupdate=func.now())

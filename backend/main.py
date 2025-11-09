@@ -199,8 +199,29 @@ def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     - **skip**: 取得を開始するオフセット。
     - **limit**: 取得するTodoの最大数。
     """
-    todos = db.query(models.TaskTBL).filter(
+    tasks = db.query(models.TaskTBL).filter(
         models.TaskTBL.DeleteFlg == False
     ).offset(skip).limit(limit).all()
 
-    return todos
+    return tasks
+
+@app.post(
+    "/task/create",
+    response_model=schemas.Task, # レスポンスのスキーマを指定
+    tags=["Task"],
+    summary="タスクを新規作成",
+    status_code=status.HTTP_201_CREATED,
+)
+def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
+    print(task.startDate, task.endDate)
+    db_task = models.TaskTBL(
+        name = task.name,
+        startDate = task.startDate,
+        endDate = task.endDate,
+        assigneeId = task.assigneeId,
+        DeleteFlg = task.DeleteFlg
+    )
+    db.add(db_task)  # データベースに追加
+    db.commit()  # 変更をコミット
+    db.refresh(db_task)  # データベースから最新の情報を取得（idなどが設定される）
+    return db_task

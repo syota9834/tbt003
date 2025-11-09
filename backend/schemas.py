@@ -26,7 +26,7 @@ class Todo(TodoBase):
 
     # PydanticがSQLAlchemyモデルからデータを読み込むための設定
     class Config:
-        from_attributes = True # from_attributes = True に変更
+        from_attributes = True
 
 class User(BaseModel):
     id: int
@@ -34,7 +34,20 @@ class User(BaseModel):
     name: Union[str, None] = None
     DeleteFlg: bool
 
+class TaskCreate(BaseModel):
+    name: Union[str, None] = None
+    assigneeId: int
+    startDate: datetime
+    endDate: datetime
+    DeleteFlg: bool = False
+
 class Task(BaseModel):
     id: int
     name: Union[str, None] = None
+    assigneeId: int
+    startDate: datetime
+    endDate: datetime
     DeleteFlg: bool
+
+    class Config:
+        from_attributes = True

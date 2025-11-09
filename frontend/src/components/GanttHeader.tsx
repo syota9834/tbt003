@@ -11,7 +11,7 @@ interface GanttHeaderProps {
 
 const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
   return (
-    <Box sx={{ display: 'flex', width: '100%', borderBottom: '1px solid #ccc', backgroundColor: 'white' }}>
+    <Box sx={{ display: 'flex', width: '100%', borderBottom: '1px solid #ccc', backgroundColor: 'white'}}>
       {dates.map(date => {
         const zonedDate = toZonedTime(date, timeZone);
         const weeklyName = DicWeeklyName[date.getDay()];

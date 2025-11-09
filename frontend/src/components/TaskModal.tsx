@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Task, Assignee } from './types';
 import { toZonedTime, fromZonedTime, format } from 'date-fns-tz';
 import { Modal, Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 const timeZone = 'Asia/Tokyo';
 
@@ -34,19 +35,34 @@ const TaskModal: React.FC<TaskModalProps> = ({
     setEndDate(new Date(zonedInitialDate.getTime() + 60 * 60 * 1000));
   }, [initialAssigneeId, initialDate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!taskName.trim()) return;
 
-    const newTask: Task = {
-      id: String(Date.now()),
-      name: taskName,
-      assigneeId: assigneeId,
-      startDate: fromZonedTime(startDate, timeZone),
-      endDate: fromZonedTime(endDate, timeZone),
-    };
-    onAddTask(newTask);
-    setTaskName('');
+    try {
+      const response = await fetch(`${API_BASE_URL}/task/create`, {
+        method: 'POST', // HTTPメソッドをPOSTに指定（新しいリソースの作成）
+        headers: {
+          'Content-Type': 'application/json', // リクエストボディの形式がJSONであることを指定
+        },
+        // 送信するデータ（新しいTodoのタイトルと完了状態）をJSON文字列に変換してボディに含める
+        body: JSON.stringify({
+          name: taskName,
+          startDate: format(startDate, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+          endDate: format(endDate, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+          assigneeId: assigneeId,
+          DeleteFlg: false
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const newTask = await response.json();
+      onAddTask(newTask);
+      setTaskName('');
+    } catch (error) {
+      console.error("Failed to fetch todos:", error);
+    }
   };
 
   if (!isOpen) return null;

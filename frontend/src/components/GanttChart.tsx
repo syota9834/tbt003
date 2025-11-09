@@ -140,25 +140,25 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
       </Paper>
 
       <Paper elevation={1} sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', border: '1px solid #ccc', fontFamily: 'Arial, sans-serif' }}>
-          <Box sx={{ display: 'flex', width: '100%' }}>
-            <GanttSidebar assignees={assignees} />
-            <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
-              <GanttHeader dates={dates} bgs={bgs} />
-              <Box sx={{ position: 'relative' }}>
-                {assignees.map(assignee => (
-                  <GanttRow
-                    key={assignee.id}
-                    assignee={assignee}
-                    tasks={tasks.filter(task => task.assigneeId === assignee.id)}
-                    dates={dates}
-                    onCellClick={handleOpenModal}
-                    onTaskClick={handleOpenEditModal}
-                  />
-                ))}
+          <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', border: '1px solid #ccc', fontFamily: 'Arial, sans-serif' }}>
+            <Box sx={{ display: 'flex', width: '100%' }}>
+              <GanttSidebar assignees={assignees} />
+              <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
+                <GanttHeader dates={dates} bgs={bgs} />
+                <Box sx={{ position: 'relative' }}>
+                  {assignees.map(assignee => (
+                    <GanttRow
+                      key={assignee.id}
+                      assignee={assignee}
+                      tasks={tasks.filter(task => task.assigneeId === assignee.id)}
+                      dates={dates}
+                      onCellClick={handleOpenModal}
+                      onTaskClick={handleOpenEditModal}
+                    />
+                  ))}
+                </Box>
               </Box>
             </Box>
-          </Box>
           {isModalOpen && selectedDate && selectedAssigneeId && (
             <TaskModal
               isOpen={isModalOpen}
