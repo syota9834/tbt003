@@ -78,6 +78,11 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
     setIsModalOpen(false);
   };
 
+  const handleDeleteTask = (deletedTask: Task) => {
+    setTasks(tasks.filter((task, index) => (task.id !== deletedTask.id)));
+    handleCloseEditModal();
+  }
+
   const handleOpenModal = (date: Date, assigneeId: string) => {
     setSelectedDate(date);
     setSelectedAssigneeId(assigneeId);
@@ -188,6 +193,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
                   isOpen={isEditModalOpen}
                   onClose={handleCloseEditModal}
                   onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
                   task={selectedTask}
                   assignees={assignees}
                 />
