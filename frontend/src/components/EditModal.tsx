@@ -3,7 +3,6 @@ import { Task, Assignee } from './types';
 import { toZonedTime, fromZonedTime, format } from 'date-fns-tz';
 import { Modal, Box, Grid, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-
 const timeZone = 'Asia/Tokyo';
 
 interface EditModalProps {
@@ -181,7 +180,6 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
           />
           <Box display="flex" alignItems="center" sx={{ mt: 4}}>
             <Button fullWidth type="button" variant="outlined" onClick={onClose} sx={{ mr: 1 }}>キャンセル</Button>
-            
             <Button fullWidth type="submit" variant="contained" color="success" sx={{ mr: 1 }}>更新</Button>
             <Button fullWidth type="button" variant="outlined" color="error" onClick={onDelete}>削除</Button>
           </Box>

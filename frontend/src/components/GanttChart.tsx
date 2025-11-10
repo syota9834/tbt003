@@ -8,7 +8,6 @@ import EditModal from './EditModal';
 import { toZonedTime, format } from 'date-fns-tz';
 import { Box, Button, Paper, CircularProgress } from '@mui/material';
 
-
 /**
  * 定数
  */
@@ -138,26 +137,25 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
 
   return (
     <Box sx={{ flexGrow: 1}}>
-      {isLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-          <CircularProgress />
+      <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end'}}>
+          <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
+            ＜＜
+          </Button>
+          <Button variant="outlined" sx={{ mx: 1 }} onClick={() => setTargetDate(new Date())}>
+            今日
+          </Button>
+          <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 7))}>
+            ＞＞
+          </Button>
         </Box>
+      </Paper>
+      {isLoading ? (
+        <Paper sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh'}}>
+          <CircularProgress />
+        </Paper>
       ) : (
         <>
-          <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-              <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
-                ＜＜
-              </Button>
-              <Button variant="outlined" sx={{ mx: 1 }} onClick={() => setTargetDate(new Date())}>
-                今日
-              </Button>
-              <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 7))}>
-                ＞＞
-              </Button>
-            </Box>
-          </Paper>
-
           <Paper elevation={1} sx={{ p: 2 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', border: '1px solid #ccc', fontFamily: 'Arial, sans-serif' }}>
                 <Box sx={{ display: 'flex', width: '100%' }}>
