@@ -5,12 +5,15 @@ import GanttSidebar from './GanttSidebar';
 import GanttRow from './GanttRow';
 import TaskModal from './TaskModal';
 import EditModal from './EditModal';
-import { fromZonedTime, toZonedTime, format } from 'date-fns-tz';
-import { Box, Button, Paper, Typography } from '@mui/material';
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-// import './GanttChart.scss'; // スタイルシートを後で作成
+import { toZonedTime, format } from 'date-fns-tz';
+import { Box, Button, Paper, CircularProgress } from '@mui/material';
 
+
+/**
+ * 定数
+ */
 const timeZone = 'Asia/Tokyo';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 
 interface gantt {
@@ -27,6 +30,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAssigneeId, setSelectedAssigneeId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // ローディング状態を追加
 
   const getUserData = async () =>{
     try {
@@ -37,7 +41,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
       const data = await response.json();
       setAssignees(data);
     } catch (error) {
-      console.error("Failed to fetch todos:", error);
+      console.error("Failed to fetch users:", error); // エラーメッセージを修正
     }
   }
 
@@ -50,7 +54,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
       const data = await response.json();
       setTasks(data);
     } catch (error) {
-      console.error("Failed to fetch todos:", error);
+      console.error("Failed to fetch tasks:", error); // エラーメッセージを修正
     }
   }
 
@@ -119,67 +123,79 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   bgs[format(toZonedTime(new Date(), timeZone), 'yyyy-MM-dd', { timeZone })] = { backgroundColor: '#d1e7dd', color: '#0f5132' };
 
   useEffect(() => {
-    getUserData();
-    getTaskData();
+    const fetchData = async () => {
+      setIsLoading(true); // データフェッチ開始時にローディングをtrueに
+      await Promise.all([getUserData(), getTaskData()]);
+      setIsLoading(false); // データフェッチ完了時にローディングをfalseに
+    };
+    fetchData();
   }, []);
 
   return (
     <Box sx={{ flexGrow: 1}}>
-      <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
-            ＜＜
-          </Button>
-          <Button variant="outlined" sx={{ mx: 1 }} onClick={() => setTargetDate(new Date())}>
-            今日
-          </Button>
-          <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 7))}>
-            ＞＞
-          </Button>
+      {isLoading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+          <CircularProgress />
         </Box>
-      </Paper>
-
-      <Paper elevation={1} sx={{ p: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', border: '1px solid #ccc', fontFamily: 'Arial, sans-serif' }}>
-            <Box sx={{ display: 'flex', width: '100%' }}>
-              <GanttSidebar assignees={assignees} />
-              <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
-                <GanttHeader dates={dates} bgs={bgs} />
-                <Box sx={{ position: 'relative' }}>
-                  {assignees.map(assignee => (
-                    <GanttRow
-                      key={assignee.id}
-                      assignee={assignee}
-                      tasks={tasks.filter(task => task.assigneeId === assignee.id)}
-                      dates={dates}
-                      onCellClick={handleOpenModal}
-                      onTaskClick={handleOpenEditModal}
-                    />
-                  ))}
-                </Box>
-              </Box>
+      ) : (
+        <>
+          <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+              <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
+                ＜＜
+              </Button>
+              <Button variant="outlined" sx={{ mx: 1 }} onClick={() => setTargetDate(new Date())}>
+                今日
+              </Button>
+              <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 7))}>
+                ＞＞
+              </Button>
             </Box>
-          {isModalOpen && selectedDate && selectedAssigneeId && (
-            <TaskModal
-              isOpen={isModalOpen}
-              onClose={handleCloseModal}
-              onAddTask={handleAddTask}
-              initialDate={selectedDate}
-              initialAssigneeId={selectedAssigneeId}
-              assignees={assignees}
-            />
-          )}
-          {isEditModalOpen && selectedTask && (
-            <EditModal
-              isOpen={isEditModalOpen}
-              onClose={handleCloseEditModal}
-              onUpdateTask={handleUpdateTask}
-              task={selectedTask}
-              assignees={assignees}
-            />
-          )}
-        </Box>
-      </Paper>
+          </Paper>
+
+          <Paper elevation={1} sx={{ p: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', border: '1px solid #ccc', fontFamily: 'Arial, sans-serif' }}>
+                <Box sx={{ display: 'flex', width: '100%' }}>
+                  <GanttSidebar assignees={assignees} />
+                  <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
+                    <GanttHeader dates={dates} bgs={bgs} />
+                    <Box sx={{ position: 'relative' }}>
+                      {assignees.map(assignee => (
+                        <GanttRow
+                          key={assignee.id}
+                          assignee={assignee}
+                          tasks={tasks.filter(task => task.assigneeId === assignee.id)}
+                          dates={dates}
+                          onCellClick={handleOpenModal}
+                          onTaskClick={handleOpenEditModal}
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+              {isModalOpen && selectedDate && selectedAssigneeId && (
+                <TaskModal
+                  isOpen={isModalOpen}
+                  onClose={handleCloseModal}
+                  onAddTask={handleAddTask}
+                  initialDate={selectedDate}
+                  initialAssigneeId={selectedAssigneeId}
+                  assignees={assignees}
+                />
+              )}
+              {isEditModalOpen && selectedTask && (
+                <EditModal
+                  isOpen={isEditModalOpen}
+                  onClose={handleCloseEditModal}
+                  onUpdateTask={handleUpdateTask}
+                  task={selectedTask}
+                  assignees={assignees}
+                />
+              )}
+            </Box>
+          </Paper>
+        </>
+      )}
     </Box>
   );
 };

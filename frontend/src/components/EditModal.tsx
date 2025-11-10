@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Task, Assignee } from './types';
 import { toZonedTime, fromZonedTime, format } from 'date-fns-tz';
 import { Modal, Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 const timeZone = 'Asia/Tokyo';
 
@@ -35,16 +36,32 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, ta
     }
   }, [task]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updatedTask: Task = {
-      ...task,
-      name: taskName,
-      assigneeId,
-      startDate: fromZonedTime(`${startDate}T${startTime}`, timeZone),
-      endDate: fromZonedTime(`${endDate}T${endTime}`, timeZone),
-    };
-    onUpdateTask(updatedTask);
+    try {
+      console.log(format(`${startDate}T${startTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }))
+      const response = await fetch(`${API_BASE_URL}/task/update/${task.id}`, {
+        method: 'PUT', // HTTPメソッドをPOSTに指定（新しいリソースの作成）
+        headers: {
+          'Content-Type': 'application/json', // リクエストボディの形式がJSONであることを指定
+        },
+        // 送信するデータ（新しいTodoのタイトルと完了状態）をJSON文字列に変換してボディに含める
+        body: JSON.stringify({
+          name: taskName,
+          startDate: format(`${startDate}T${startTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+          endDate: format(`${endDate}T${endTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+          assigneeId: assigneeId,
+          DeleteFlg: false
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const updatedTask = await response.json();
+      onUpdateTask(updatedTask);
+    } catch (error) {
+      console.error("Failed to fetch todos:", error);
+    }
   };
 
   if (!isOpen) {

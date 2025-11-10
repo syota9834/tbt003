@@ -34,13 +34,6 @@ class User(BaseModel):
     name: Union[str, None] = None
     DeleteFlg: bool
 
-class TaskCreate(BaseModel):
-    name: Union[str, None] = None
-    assigneeId: int
-    startDate: datetime
-    endDate: datetime
-    DeleteFlg: bool = False
-
 class Task(BaseModel):
     id: int
     name: Union[str, None] = None
@@ -48,6 +41,23 @@ class Task(BaseModel):
     startDate: datetime
     endDate: datetime
     DeleteFlg: bool
+
+    class Config:
+        from_attributes = True
+
+class TaskCreate(BaseModel):
+    name: Union[str, None] = None
+    assigneeId: int
+    startDate: datetime
+    endDate: datetime
+    DeleteFlg: bool = False
+
+class TaskUpdate(BaseModel):
+    name: Union[str, None] = None
+    assigneeId: Union[int, None] = None
+    startDate: Union[datetime, None] = None
+    endDate: Union[datetime, None] = None
+    DeleteFlg: Union[bool, None] = None
 
     class Config:
         from_attributes = True

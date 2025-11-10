@@ -213,7 +213,6 @@ def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     status_code=status.HTTP_201_CREATED,
 )
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
-    print(task.startDate, task.endDate)
     db_task = models.TaskTBL(
         name = task.name,
         startDate = task.startDate,
@@ -225,3 +224,41 @@ def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     db.commit()  # 変更をコミット
     db.refresh(db_task)  # データベースから最新の情報を取得（idなどが設定される）
     return db_task
+
+@app.put(
+    "/task/update/{task_id}",
+    response_model=schemas.Task,
+    tags=["Task"],
+    summary="タスクを更新",
+    status_code=status.HTTP_201_CREATED,
+)
+def update_task(task_id: int, task: schemas.TaskUpdate, db: Session = Depends(get_db)):
+    db_task = db.query(models.TaskTBL).filter(models.TaskTBL.id == task_id).first()
+    if db_task is None:
+        raise HTTPException(status_code=404, detail="Todo not found")
+
+    # Pydanticモデルのdict()メソッドを使って、更新対象のフィールドのみを適用
+    update_data = task.model_dump(exclude_unset=True)  # exclude_unset=True でNoneでないフィールドのみ更新
+    for key, value in update_data.items():
+        setattr(db_task, key, value)
+
+    db.add(db_task)
+    db.commit()
+    db.refresh(db_task)
+
+    return db_task
+
+@app.delete(
+    "/task/delete/{task_id}",
+    tags=["Task"],
+    summary="タスクを削除",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    db_todo = db.query(models.TaskTBL).filter(models.TaskTBL.id == task_id).first()
+    if db_todo is None:
+        raise HTTPException(status_code=404, detail="Todo not found")
+
+    db.delete(db_todo)
+    db.commit()
+    return {"message": "Todo deleted successfully"}
