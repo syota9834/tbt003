@@ -15,6 +15,11 @@ interface TaskModalProps {
   assignees: Assignee[];
 }
 
+const FormErrorProps = {
+  error: false,
+  text: ""
+}
+
 const TaskModal: React.FC<TaskModalProps> = ({
   isOpen,
   onClose,
@@ -24,6 +29,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
   assignees,
 }) => {
   const [taskName, setTaskName] = useState('');
+  const [formError, setFormError] = useState(FormErrorProps);
   const [assigneeId, setAssigneeId] = useState(initialAssigneeId);
   const [startDate, setStartDate] = useState(toZonedTime(initialDate, timeZone));
   const [endDate, setEndDate] = useState(new Date(toZonedTime(initialDate, timeZone).getTime() + 60 * 60 * 1000));
@@ -35,10 +41,21 @@ const TaskModal: React.FC<TaskModalProps> = ({
     setEndDate(new Date(zonedInitialDate.getTime() + 60 * 60 * 1000));
   }, [initialAssigneeId, initialDate]);
 
+  const handleTaskName = (formTaskName: string) => {
+    setTaskName(formTaskName);
+    if (!formTaskName.trim()){
+      setFormError({error: true, text: "タスク名を入力してください"});
+    }else{
+      setFormError(FormErrorProps);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!taskName.trim()) return;
-
+    if (!taskName.trim()){
+      setFormError({error: true, text: "タスク名を入力してください"});
+      return;
+    }
     try {
       const response = await fetch(`${API_BASE_URL}/task/create`, {
         method: 'POST', // HTTPメソッドをPOSTに指定（新しいリソースの作成）
@@ -99,6 +116,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
   };
 
   return (
+    <>
     <Modal open={isOpen} onClose={onClose}>
       <Box sx={{
         position: 'absolute',
@@ -124,7 +142,9 @@ const TaskModal: React.FC<TaskModalProps> = ({
             name="taskName"
             autoFocus
             value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
+            error={formError.error}
+            helperText={formError.text}
+            onChange={(e) => handleTaskName(e.target.value)}
           />
           <FormControl fullWidth margin="normal" required>
             <InputLabel id="assignee-label">担当者</InputLabel>
@@ -203,6 +223,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
         </Box>
       </Box>
     </Modal>
+    </>
   );
 };
 
