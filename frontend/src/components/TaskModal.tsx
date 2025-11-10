@@ -105,7 +105,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 400,
+        width: 800,
         bgcolor: 'background.paper',
         border: '2px solid #000',
         boxShadow: 24,
@@ -196,22 +196,10 @@ const TaskModal: React.FC<TaskModalProps> = ({
             }}
             inputProps={{ step: 1800 }} // 30分刻み
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            追加
-          </Button>
-          <Button
-            type="button"
-            fullWidth
-            variant="outlined"
-            onClick={onClose}
-          >
-            キャンセル
-          </Button>
+          <Box display="flex" alignItems="center" sx={{ mt: 4}}>
+            <Button type="button" fullWidth variant="outlined" sx={{ mr: 1 }} onClick={onClose}>キャンセル</Button>
+            <Button type="submit" fullWidth variant="contained" color="success">追加</Button>
+          </Box>
         </Box>
       </Box>
     </Modal>

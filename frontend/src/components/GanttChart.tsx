@@ -79,7 +79,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   };
 
   const handleDeleteTask = (deletedTask: Task) => {
-    setTasks(tasks.filter((task, index) => (task.id !== deletedTask.id)));
+    setTasks(tasks.filter(task => (task.id !== deletedTask.id)));
     handleCloseEditModal();
   }
 
