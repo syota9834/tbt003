@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { toZonedTime, format } from 'date-fns-tz';
 import { Box, Typography } from '@mui/material';
+import DateGanttChart from "./dateModal/DateGanttChart"
 
 const timeZone = 'Asia/Tokyo';
 const DicWeeklyName : { [key: number]: any } = {0: "日", 1: "月", 2: "火", 3: "水", 4: "木", 5: "金", 6: "土"};
@@ -10,30 +11,53 @@ interface GanttHeaderProps {
 };
 
 const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
-  return (
-    <Box sx={{ display: 'flex', width: '100%', borderBottom: '1px solid #ccc', backgroundColor: 'white'}}>
-      {dates.map(date => {
-        const zonedDate = toZonedTime(date, timeZone);
-        const weeklyName = DicWeeklyName[date.getDay()];
-        const dateKey = format(zonedDate, 'yyyy-MM-dd', { timeZone });
-        const style = bgs[dateKey] || {};
+  const [isHeaderModalOpen, setIsHeaderModalOpen] = useState(false);
 
-        return (
-          <Box
-            key={date.toISOString()}
-            sx={{
-              flex: 1,
-              p: '10px',
-              textAlign: 'center',
-              borderRight: '1px solid #ccc',
-              ...style
-            }}
-          >
-            <Typography noWrap>{format(zonedDate, 'M/d', { timeZone })} ({weeklyName})</Typography>
-          </Box>
-        );
-      })}
-    </Box>
+  const handleClick = () => {
+    setIsHeaderModalOpen(true);
+  };
+  const handleCloseEditModal = () => {
+    setIsHeaderModalOpen(false);
+  };
+
+  return (
+    <>
+      <Box sx={{ display: 'flex', width: '100%', borderBottom: '1px solid #ccc', backgroundColor: 'white'}}>
+        {dates.map(date => {
+          const zonedDate = toZonedTime(date, timeZone);
+          const weeklyName = DicWeeklyName[date.getDay()];
+          const dateKey = format(zonedDate, 'yyyy-MM-dd', { timeZone });
+          const style = bgs[dateKey] || {};
+          const targetDate = "a"
+
+          return (
+            <Box
+              onClick={handleClick}
+              key={date.toISOString()}
+              sx={{
+                flex: 1,
+                p: '10px',
+                textAlign: 'center',
+                borderRight: '1px solid #ccc',
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#f0f0f0',
+                },
+                ...style
+              }}
+            >
+              <Typography noWrap>{format(zonedDate, 'M/d', { timeZone })} ({weeklyName})</Typography>
+            </Box>
+          );
+        })}
+      </Box>
+      {isHeaderModalOpen && (
+        <DateGanttChart
+          isOpen={isHeaderModalOpen}
+          onClose={handleCloseEditModal}
+        />
+      )}
+    </>
   );
 };
 

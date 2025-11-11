@@ -4,7 +4,6 @@ import { BrowserRouter, NavLink } from 'react-router-dom';
 import App from "./App"
 import { Container } from '@mui/material';
 import "./App.scss";
-import MenuIcon from '@mui/icons-material/Delete';
 import { AppBar, Toolbar, Typography, Button, IconButton} from '@mui/material';
 
 
