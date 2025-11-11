@@ -13,9 +13,14 @@ interface EditModalProps {
   task: Task;
   assignees: Assignee[];
 }
+const FormErrorProps = {
+  error: false,
+  text: ""
+}
 
 const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, onDeleteTask, task, assignees }) => {
   const [taskName, setTaskName] = useState('');
+  const [formError, setFormError] = useState(FormErrorProps);
   const [assigneeId, setAssigneeId] = useState('');
   const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState('');
@@ -36,8 +41,21 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
     }
   }, [task]);
 
+  const handleTaskName = (formTaskName: string) => {
+    setTaskName(formTaskName);
+    if (!formTaskName.trim()){
+      setFormError({error: true, text: "タスク名を入力してください"});
+    }else{
+      setFormError(FormErrorProps);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!taskName.trim()){
+      setFormError({error: true, text: "タスク名を入力してください"});
+      return;
+    }
     try {
       const response = await fetch(`${API_BASE_URL}/task/update/${task.id}`, {
         method: 'PUT',
@@ -110,7 +128,9 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
             name="taskName"
             autoFocus
             value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
+            error={formError.error}
+            helperText={formError.text}
+            onChange={(e) => handleTaskName(e.target.value)}
           />
           <FormControl fullWidth margin="normal" required>
             <InputLabel id="assignee-label">担当者</InputLabel>

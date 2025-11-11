@@ -29,7 +29,7 @@ const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
               ...style
             }}
           >
-            <Typography>{format(zonedDate, 'M/d', { timeZone })} ({weeklyName})</Typography>
+            <Typography noWrap>{format(zonedDate, 'M/d', { timeZone })} ({weeklyName})</Typography>
           </Box>
         );
       })}

@@ -181,11 +181,45 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     - **skip**: 取得を開始するオフセット。
     - **limit**: 取得するTodoの最大数。
     """
-    todos = db.query(models.UserTBL).filter(
-        models.UserTBL.DeleteFlg == False
-    ).offset(skip).limit(limit).all()
+    todos = db.query(models.UserTBL).offset(skip).limit(limit).all()
 
     return todos
+
+@app.post(
+    "/user/create",
+    response_model=schemas.User,
+    tags=["User"],
+    summary="ユーザーを新規作成",
+    status_code=status.HTTP_201_CREATED,
+)
+def create_users(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = models.UserTBL(
+        name = user.name,
+        LastModified = datetime.today(),
+        DeleteFlg = False
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@app.put(
+    "/user/{user_id}",
+    response_model=schemas.User,
+    tags=["User"],
+    summary="ユーザーを削除",
+)
+def update_users(user_id: int, user: schemas.UserUpdate, db: Session = Depends(get_db)):
+    db_user = db.query(models.UserTBL).filter(models.UserTBL.id == user_id).first()
+    update_data = user.model_dump(exclude_unset=True) # exclude_unset=True でNoneでないフィールドのみ更新
+
+    for key, value in update_data.items():
+        setattr(db_user, key, value)
+
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 @app.get(
     "/task",

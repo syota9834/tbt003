@@ -9,4 +9,5 @@ export interface Task {
 export interface Assignee {
   id: string;
   name: string;
+  DeleteFlg: boolean;
 }

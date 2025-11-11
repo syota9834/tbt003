@@ -1,9 +1,10 @@
-import { Routes, Route, NavLink } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import Todo from "./Todo"
+import Manage from "./Manage"
 import Log from "./Log"
 import GanttChart from "./components/GanttChart";
-import { AppBar, Toolbar, Typography, Button, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 
 
 function App(){
@@ -38,23 +39,8 @@ function App(){
   }, []);
 
   return (
+    <>
     <Grid container spacing={2}>
-        <AppBar position="static" color="default" elevation={1}>
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              TBT
-            </Typography>
-            <Button component={NavLink} to="/" color="inherit">
-              予約管理
-            </Button>
-            <Button component={NavLink} to="/daily" color="inherit">
-              今日のタスク
-            </Button>
-            <Button component={NavLink} to="/log" color="inherit">
-              過去のタスク
-            </Button>
-          </Toolbar>
-        </AppBar>
         <Routes>
           <Route path="/"
             element={<GanttChart
@@ -63,10 +49,12 @@ function App(){
               dicHolidays={dicHolidays}
             />}
           />
+          <Route path="manage" element={<Manage />} />
           <Route path="/daily" element={<Todo />} />
           <Route path="/log" element={<Log />} />
         </Routes>
     </Grid>
+    </>
   );
 }
 

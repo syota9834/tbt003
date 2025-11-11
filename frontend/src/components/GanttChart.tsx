@@ -163,7 +163,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
                   <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
                     <GanttHeader dates={dates} bgs={bgs} />
                     <Box sx={{ position: 'relative' }}>
-                      {assignees.map(assignee => (
+                      {assignees.filter(assignee => !assignee.DeleteFlg).map(assignee => (
                         <GanttRow
                           key={assignee.id}
                           assignee={assignee}

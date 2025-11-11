@@ -30,9 +30,18 @@ class Todo(TodoBase):
 
 class User(BaseModel):
     id: int
-    UserName: Union[str, None] = None
     name: Union[str, None] = None
     DeleteFlg: bool
+
+    class Config:
+        from_attributes = True
+
+class UserCreate(BaseModel):
+    name: Union[str, None] = None
+    DeleteFlg: bool = False
+
+class UserUpdate(BaseModel):
+    DeleteFlg: Union[bool, None] = None
 
 class Task(BaseModel):
     id: int
