@@ -124,7 +124,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
             required
             fullWidth
             id="taskName"
-            label="タスク名"
+            label="タイトル"
             name="taskName"
             autoFocus
             value={taskName}
@@ -133,12 +133,14 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
             onChange={(e) => handleTaskName(e.target.value)}
           />
           <FormControl fullWidth margin="normal" required>
-            <InputLabel id="assignee-label">担当者</InputLabel>
+            <InputLabel id="assignee-label">タスク名</InputLabel>
             <Select
               labelId="assignee-label"
               id="assigneeId"
               value={assigneeId}
-              label="担当者"
+              label="タスク名"
+              readOnly
+              style={{backgroundColor: "#eee"}}
               onChange={(e) => setAssigneeId(e.target.value as string)}
             >
               {assignees.map(a => (

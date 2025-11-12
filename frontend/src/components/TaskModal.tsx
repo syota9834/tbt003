@@ -138,7 +138,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
             required
             fullWidth
             id="taskName"
-            label="タスク名"
+            label="タイトル"
             name="taskName"
             autoFocus
             value={taskName}
@@ -147,13 +147,15 @@ const TaskModal: React.FC<TaskModalProps> = ({
             onChange={(e) => handleTaskName(e.target.value)}
           />
           <FormControl fullWidth margin="normal" required>
-            <InputLabel id="assignee-label">担当者</InputLabel>
+            <InputLabel id="assignee-label">タスク名</InputLabel>
             <Select
               labelId="assignee-label"
               id="assignee"
               value={assigneeId}
-              label="担当者"
+              label="タスク名"
               onChange={(e) => setAssigneeId(e.target.value as string)}
+              readOnly
+              style={{backgroundColor: "#eee"}}
             >
               {assignees.map((assignee) => (
                 <MenuItem key={assignee.id} value={assignee.id}>
