@@ -12,12 +12,15 @@ interface GanttHeaderProps {
 
 const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
   const [isHeaderModalOpen, setIsHeaderModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-  const handleClick = () => {
+  const handleClick = (date: Date) => {
+    setSelectedDate(date);
     setIsHeaderModalOpen(true);
   };
   const handleCloseEditModal = () => {
     setIsHeaderModalOpen(false);
+    setSelectedDate(null);
   };
 
   return (
@@ -32,7 +35,7 @@ const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
 
           return (
             <Box
-              onClick={handleClick}
+              onClick={() => handleClick(date)}
               key={date.toISOString()}
               sx={{
                 flex: 1,
@@ -51,10 +54,11 @@ const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
           );
         })}
       </Box>
-      {isHeaderModalOpen && (
+      {isHeaderModalOpen && selectedDate && (
         <DateGanttChart
           isOpen={isHeaderModalOpen}
           onClose={handleCloseEditModal}
+          selectedDate={selectedDate}
         />
       )}
     </>

@@ -19,20 +19,20 @@ const FormErrorProps = {
 }
 
 const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, onDeleteTask, task, assignees }) => {
-  const [taskName, setTaskName] = useState('');
+  const [taskName, setTaskName] = useState<string>('');
   const [formError, setFormError] = useState(FormErrorProps);
-  const [assigneeId, setAssigneeId] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [assigneeId, setAssigneeId] = useState<number>(0); // 初期値を0または適切なデフォルト値に設定
+  const [startDate, setStartDate] = useState<string>('');
+  const [startTime, setStartTime] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [endTime, setEndTime] = useState<string>('');
 
   useEffect(() => {
     if (task) {
-      const zonedStartDate = toZonedTime(task.startDate, timeZone);
-      const zonedEndDate = toZonedTime(task.endDate, timeZone);
+      const zonedStartDate = toZonedTime(new Date(task.startDate), timeZone);
+      const zonedEndDate = toZonedTime(new Date(task.endDate), timeZone);
 
-      setTaskName(task.name);
+      setTaskName(task.name || ''); // nullの場合に備えて空文字列を設定
       setAssigneeId(task.assigneeId);
       setStartDate(format(zonedStartDate, 'yyyy-MM-dd'));
       setStartTime(format(zonedStartDate, 'HH:mm'));
@@ -141,7 +141,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
               label="タスク名"
               readOnly
               style={{backgroundColor: "#eee"}}
-              onChange={(e) => setAssigneeId(e.target.value as string)}
+              onChange={(e) => setAssigneeId(e.target.value as number)}
             >
               {assignees.map(a => (
                 <MenuItem key={a.id} value={a.id}>{a.name}</MenuItem>

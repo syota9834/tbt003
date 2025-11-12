@@ -11,7 +11,7 @@ interface GanttRowProps {
   assignee: Assignee;
   tasks: Task[];
   dates: Date[];
-  onCellClick: (date: Date, assigneeId: string) => void;
+  onCellClick: (date: Date, assigneeId: number) => void;
   onTaskClick: (task: Task) => void;
 }
 

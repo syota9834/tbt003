@@ -6,7 +6,7 @@ import GanttRow from './GanttRow';
 import TaskModal from './TaskModal';
 import EditModal from './EditModal';
 import { toZonedTime, format } from 'date-fns-tz';
-import { Box, Button, Paper, CircularProgress } from '@mui/material';
+import { Box, Button, Paper, CircularProgress, Typography, Stack } from '@mui/material';
 
 /**
  * 定数
@@ -28,7 +28,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedAssigneeId, setSelectedAssigneeId] = useState<string | null>(null);
+  const [selectedAssigneeId, setSelectedAssigneeId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true); // ローディング状態を追加
 
   const getUserData = async () =>{
@@ -82,7 +82,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
     handleCloseEditModal();
   }
 
-  const handleOpenModal = (date: Date, assigneeId: string) => {
+  const handleOpenModal = (date: Date, assigneeId: number) => {
     setSelectedDate(date);
     setSelectedAssigneeId(assigneeId);
     setIsModalOpen(true);
@@ -138,17 +138,27 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   return (
     <Box sx={{ flexGrow: 1}}>
       <Paper elevation={1} sx={{ p: 2, mb: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end'}}>
-          <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
-            ＜＜
-          </Button>
-          <Button variant="outlined" sx={{ mx: 1 }} onClick={() => setTargetDate(new Date())}>
-            今日
-          </Button>
-          <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 7))}>
-            ＞＞
-          </Button>
-        </Box>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center" // 垂直方向の中央揃えが必要な場合
+          sx={{ width: '100%' }} // 親要素の幅いっぱいに広げる
+        >
+          <Typography>
+            緑：完了　青：未完了
+          </Typography>
+          <Typography>
+            <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
+              ＜＜
+            </Button>
+            <Button variant="outlined" sx={{ mx: 1 }} onClick={() => setTargetDate(new Date())}>
+              今日
+            </Button>
+            <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 7))}>
+              ＞＞
+            </Button>
+          </Typography>
+        </Stack>
       </Paper>
       {isLoading ? (
         <Paper sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh'}}>

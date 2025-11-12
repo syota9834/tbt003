@@ -11,7 +11,7 @@ interface TaskModalProps {
   onClose: () => void;
   onAddTask: (task: Task) => void;
   initialDate: Date;
-  initialAssigneeId: string;
+  initialAssigneeId: number;
   assignees: Assignee[];
 }
 
@@ -30,7 +30,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
 }) => {
   const [taskName, setTaskName] = useState('');
   const [formError, setFormError] = useState(FormErrorProps);
-  const [assigneeId, setAssigneeId] = useState(initialAssigneeId);
+  const [assigneeId, setAssigneeId] = useState<number>(initialAssigneeId);
   const [startDate, setStartDate] = useState(toZonedTime(initialDate, timeZone));
   const [endDate, setEndDate] = useState(new Date(toZonedTime(initialDate, timeZone).getTime() + 60 * 60 * 1000));
 
@@ -153,7 +153,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
               id="assignee"
               value={assigneeId}
               label="タスク名"
-              onChange={(e) => setAssigneeId(e.target.value as string)}
+              onChange={(e) => setAssigneeId(e.target.value as number)}
               readOnly
               style={{backgroundColor: "#eee"}}
             >

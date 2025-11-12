@@ -1,13 +1,14 @@
 export interface Task {
-  id: string;
-  name: string;
-  assigneeId: string;
-  startDate: Date;
-  endDate: Date;
+  id: number;
+  name: string | null;
+  assigneeId: number;
+  startDate: string; // ISO 8601 string
+  endDate: string;   // ISO 8601 string
+  DeleteFlg: boolean;
 }
 
 export interface Assignee {
-  id: string;
-  name: string;
+  id: number;
+  name: string | null;
   DeleteFlg: boolean;
 }
