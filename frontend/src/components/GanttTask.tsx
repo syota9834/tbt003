@@ -33,6 +33,9 @@ const GanttTask: React.FC<GanttTaskProps> = ({ task, style, onClick }) => {
         whiteSpace: 'nowrap',
         display: 'block',
         boxSizing: 'border-box',
+        '&:hover': {
+                  backgroundColor: '#0058b1ff',
+                },
         ...style,
       }}
       title={`${task.name} (${task.startDate} - ${task.endDate})`}

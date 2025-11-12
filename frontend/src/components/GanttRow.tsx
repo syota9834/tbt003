@@ -16,63 +16,62 @@ interface GanttRowProps {
 }
 
 const GanttRow: React.FC<GanttRowProps> = ({ assignee, tasks, dates, onCellClick, onTaskClick }) => {
-  const getMinutesSinceStartOfDay = (date: Date) => {
-    const zonedDate = toZonedTime(date, timeZone);
-    return getHours(zonedDate) * 60 + getMinutes(zonedDate);
-  };
-
-  const totalMinutesInDay = 24 * 60; // 1日の総分数
+  // Ganttチャート全体の表示期間の開始日と終了日
+  const chartStartDate = startOfDay(toZonedTime(dates[0], timeZone));
+  const chartEndDate = endOfDay(toZonedTime(dates[dates.length - 1], timeZone));
+  const totalChartDurationMinutes = (chartEndDate.getTime() - chartStartDate.getTime()) / (1000 * 60); // チャート全体の分数
 
   return (
     <Box sx={{ display: 'flex', width: '100%', borderBottom: '1px solid #eee', height: '40px', position: 'relative' }}>
-      {dates.map(date => {
-        const cellStart = startOfDay(toZonedTime(date, timeZone));
-        const cellEnd = endOfDay(toZonedTime(date, timeZone));
+      {/* 日付セルはクリックイベントのために残す */}
+      {dates.map(date => (
+        <Box
+          key={date.toISOString()}
+          sx={{
+            flex: 1,
+            borderRight: '1px solid #eee',
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
+            },
+          }}
+          onClick={() => onCellClick(date, assignee.id)}
+        />
+      ))}
+
+      {/* タスクを日付セルに依存せず、GanttRow全体にわたってレンダリング */}
+      {tasks.map(task => {
+        const taskStart = toZonedTime(task.startDate, timeZone);
+        const taskEnd = toZonedTime(task.endDate, timeZone);
+
+        // タスクがチャートの表示期間内にあるかチェック
+        if (taskStart > chartEndDate || taskEnd < chartStartDate) {
+          return null; // 表示期間外のタスクはレンダリングしない
+        }
+
+        // チャートの開始日を基準としたタスクの開始位置と幅を計算
+        const effectiveStartDate = new Date(Math.max(taskStart.getTime(), chartStartDate.getTime()));
+        const effectiveEndDate = new Date(Math.min(taskEnd.getTime(), chartEndDate.getTime()));
+
+        const startOffsetMinutes = (effectiveStartDate.getTime() - chartStartDate.getTime()) / (1000 * 60);
+        const durationMinutes = (effectiveEndDate.getTime() - effectiveStartDate.getTime()) / (1000 * 60);
+
+        const left = (startOffsetMinutes / totalChartDurationMinutes) * 100;
+        const width = (durationMinutes / totalChartDurationMinutes) * 100;
 
         return (
-          <Box
-            key={date.toISOString()}
-            sx={{
-              flex: 1,
-              borderRight: '1px solid #eee',
-              position: 'relative',
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: '#f0f0f0',
-              },
+          <GanttTask
+            key={task.id}
+            task={task}
+            style={{
+              position: 'absolute', // 絶対配置でGanttRow全体にわたって配置
+              top: '4px', // 上に2pxの余白
+              height: 'calc(100% - 8px)', // 上下2pxずつの余白を考慮して高さを調整
+              left: `${left}%`,
+              width: `${width}%`,
+              zIndex: 1, // タスクが日付セルより手前に来るように
             }}
-            onClick={() => onCellClick(date, assignee.id)}
-          >
-            {tasks
-              .filter(task => {
-                const taskStart = toZonedTime(task.startDate, timeZone);
-                const taskEnd = toZonedTime(task.endDate, timeZone);
-                return taskStart <= cellEnd && taskEnd >= cellStart;
-              })
-              .map(task => {
-                const taskStart = toZonedTime(task.startDate, timeZone);
-                const taskEnd = toZonedTime(task.endDate, timeZone);
-
-                const effectiveStartDate = new Date(Math.max(taskStart.getTime(), cellStart.getTime()));
-                const effectiveEndDate = new Date(Math.min(taskEnd.getTime(), cellEnd.getTime()));
-
-                const startMinutes = getMinutesSinceStartOfDay(effectiveStartDate);
-                const endMinutes = getMinutesSinceStartOfDay(effectiveEndDate);
-                const durationMinutes = endMinutes - startMinutes;
-
-                const left = (startMinutes / totalMinutesInDay) * 100;
-                const width = (durationMinutes / totalMinutesInDay) * 100;
-
-                return (
-                  <GanttTask
-                    key={task.id}
-                    task={task}
-                    style={{ left: `${left}%`, width: `${width}%` }}
-                    onClick={onTaskClick}
-                  />
-                );
-              })}
-          </Box>
+            onClick={onTaskClick}
+          />
         );
       })}
     </Box>
