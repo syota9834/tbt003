@@ -6,7 +6,8 @@ import GanttRow from './GanttRow';
 import TaskModal from './TaskModal';
 import EditModal from './EditModal';
 import { toZonedTime, format } from 'date-fns-tz';
-import { Box, Button, Paper, CircularProgress, Typography, Stack } from '@mui/material';
+import { Box, Button, Paper, CircularProgress, Typography, Stack, ListItemIcon } from '@mui/material';
+import SquareIcon from '@mui/icons-material/Square';
 
 /**
  * 定数
@@ -144,9 +145,11 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
           alignItems="center" // 垂直方向の中央揃えが必要な場合
           sx={{ width: '100%' }} // 親要素の幅いっぱいに広げる
         >
-          <Typography>
-            緑：完了　青：未完了
-          </Typography>
+          <ListItemIcon>
+            <SquareIcon color="success" />：完了
+            &emsp;
+            <SquareIcon color="primary" />：未完了
+          </ListItemIcon>
           <Typography>
             <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
               ＜＜

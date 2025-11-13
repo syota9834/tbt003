@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Task, Assignee } from '../types';
 import { toZonedTime, format } from 'date-fns-tz';
 import { Modal, Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { ja } from 'date-fns/locale'
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const timeZone = 'Asia/Tokyo';
 
@@ -77,7 +78,7 @@ const DateGanttChart: React.FC<DateGanttChartProps> = ({isOpen, onClose, selecte
         p: 4,
       }}>
         <Typography variant="h6" component="h2" gutterBottom>
-          {format(toZonedTime(selectedDate, timeZone), 'M/d (eee)', { timeZone })} のタスク
+          {format(toZonedTime(selectedDate, timeZone), 'M/d (E)', { locale: ja })} のタスク
         </Typography>
         {loading && <Typography>読み込み中...</Typography>}
         {error && <Typography color="error">エラー: {error}</Typography>}
