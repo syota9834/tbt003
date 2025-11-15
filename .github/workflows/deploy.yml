@@ -46,6 +46,13 @@ jobs:
           fi
         working-directory: frontend/dist # publish_dirと同じディレクトリで実行
 
+      - name: Remove _config.yml if exists
+        run: |
+          if [ -f _config.yml ]; then
+            rm _config.yml
+          fi
+        working-directory: frontend/dist # publish_dirと同じディレクトリで実行
+
       # GitHub Pagesにデプロイ
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
