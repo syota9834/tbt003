@@ -85,7 +85,7 @@ function Manage(){
 
       // usersステートを更新し、該当するユーザーを置き換える
       setUsers(prevUsers =>
-        prevUsers.map(user => (user.id === userId ? updatedUser : user))
+        prevUsers.map(user => (String(user.id) === userId ? updatedUser : user))
       );
 
     } catch (error) {
@@ -141,7 +141,7 @@ function Manage(){
                   key={user.id}
                   secondaryAction={
                     <>
-                      <IconButton edge="end" aria-label="削除" onClick={() => removeUser(user.id, !user.DeleteFlg)}>
+                      <IconButton edge="end" aria-label="削除" onClick={() => removeUser(String(user.id), !user.DeleteFlg)}>
                         <DeleteIcon color="error" />
                       </IconButton>
                     </>
@@ -165,7 +165,7 @@ function Manage(){
                   key={user.id}
                   secondaryAction={
                     <>
-                      <IconButton edge="end" aria-label="戻す" onClick={() => removeUser(user.id, !user.DeleteFlg)}>
+                      <IconButton edge="end" aria-label="戻す" onClick={() => removeUser(String(user.id), !user.DeleteFlg)}>
                         <RadioButtonUncheckedIcon color="success" />
                       </IconButton>
                     </>
