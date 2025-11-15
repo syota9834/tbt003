@@ -19,19 +19,16 @@ jobs:
           node-version: 20
 
       # 依存関係をインストールする（frontendディレクトリで実行）
-      - name: Install Dependencies
-        # 依存関係のキャッシュを有効にすると安定性が向上します
-        uses: actions/cache@v4
-        with:
-          path: frontend/node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-
-      - name: Run npm install in frontend
-        # cd コマンドを分けずに、作業ディレクトリ設定で実行を推奨
+      - name: Install and Cache Dependencies
         run: npm install
-        working-directory: frontend # ← この設定を追加
+        working-directory: frontend
+        # 注: この方法ではキャッシュは使用しません。
+
+      # Reactアプリケーションをビルドする
+      - name: Build React App
+        # npm run build を実行 (修正後の package.json の `npx vite build` が実行される)
+        run: npm run build
+        working-directory: frontend
 
       # Reactアプリケーションをビルドする
       - name: Build React App
