@@ -9,7 +9,7 @@ import { AppBar, Toolbar, Typography, Button, IconButton} from '@mui/material';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/tbt003">
        <AppBar position="sticky" sx={{top: 0}}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
