@@ -25,6 +25,9 @@ jobs:
         # 注: この方法ではキャッシュは使用しません。
 
       # Reactアプリケーションをビルドする
+      - name: Make Vite executable
+        run: chmod +x node_modules/.bin/vite
+        working-directory: frontend
       - name: Build React App
         run: node_modules/.bin/vite build
         working-directory: frontend
