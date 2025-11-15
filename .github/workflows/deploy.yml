@@ -1,0 +1,38 @@
+# .github/workflows/deploy.yml
+name: Deploy React App to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # mainブランチにプッシュされたときに実行
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # 使用するNodeのバージョン
+
+      # 依存関係をインストールする（frontendディレクトリで実行）
+      - name: Install Dependencies
+        run: cd frontend && npm install
+
+      # Reactアプリケーションをビルドする（frontendディレクトリで実行）
+      # frontend/distフォルダにビルド成果物が生成されます
+      - name: Build React App
+        run: cd frontend && npm run build
+
+      # GitHub Pagesにデプロイ
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # 成果物があるディレクトリを指定
+          publish_dir: ./frontend/dist 
+          # サブディレクトリでのホストに対応
+          cname: syota9834.github.io/tbt003 # ここをリポジトリ名に合わせる
