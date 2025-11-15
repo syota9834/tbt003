@@ -1,0 +1,11 @@
+# Jekyllが無視すべきフォルダやファイルを指定
+# node_modulesはfrontend/以下にあるため、そのパスで除外
+exclude:
+  - backend/
+  - frontend/node_modules/
+  - frontend/package.json
+  - frontend/package-lock.json
+  # Jekyllが処理しないようにするため、その他の設定ファイルも除外
+  - package.json
+  - package-lock.json
+  - README.md # 必要に応じて
