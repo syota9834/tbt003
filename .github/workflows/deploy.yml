@@ -25,16 +25,10 @@ jobs:
         # 注: この方法ではキャッシュは使用しません。
 
       # Reactアプリケーションをビルドする
-      - name: Build React App
-        # npm run build を実行 (修正後の package.json の `npx vite build` が実行される)
-        run: npm run build
+      - name: Build React App (Explicit npx)
+        # `npm run build` は使わず、`npx` で直接 `vite` を呼び出す
+        run: npx vite build
         working-directory: frontend
-
-      # Reactアプリケーションをビルドする
-      - name: Build React App
-        # npm run build を実行
-        run: npm run build
-        working-directory: frontend # ← この設定を追加
 
       # GitHub Pagesにデプロイ
       - name: Deploy to GitHub Pages
