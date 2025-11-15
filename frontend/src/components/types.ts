@@ -5,6 +5,7 @@ export interface Task {
   startDate: string; // ISO 8601 string
   endDate: string;   // ISO 8601 string
   DeleteFlg: boolean;
+  completed: boolean;
 }
 
 export interface Assignee {

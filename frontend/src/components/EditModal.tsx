@@ -26,6 +26,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
   const [startTime, setStartTime] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
+  const [completed, setCompleted] =  useState<boolean>(false);
 
   useEffect(() => {
     if (task) {
@@ -38,6 +39,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
       setStartTime(format(zonedStartDate, 'HH:mm'));
       setEndDate(format(zonedEndDate, 'yyyy-MM-dd'));
       setEndTime(format(zonedEndDate, 'HH:mm'));
+      setCompleted(task.completed);
     }
   }, [task]);
 
@@ -67,6 +69,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
           startDate: format(`${startDate}T${startTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
           endDate: format(`${endDate}T${endTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
           assigneeId: assigneeId,
+          completed: false,
           DeleteFlg: false
         }),
       });
@@ -79,6 +82,36 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
       console.error("Failed to fetch task:", error);
     }
   };
+
+  const onFinish = async () => {
+    if (!taskName.trim()){
+      setFormError({error: true, text: "タスク名を入力してください"});
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/task/update/${task.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: taskName,
+          startDate: format(`${startDate}T${startTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+          endDate: format(`${endDate}T${endTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+          assigneeId: assigneeId,
+          completed: !completed,
+          DeleteFlg: false
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const updatedTask = await response.json();
+      onUpdateTask(updatedTask);
+    } catch (error) {
+      console.error("Failed to fetch task:", error);
+    }   
+  }
 
   const onDelete = async() => {
     try {
@@ -202,7 +235,11 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
           />
           <Box display="flex" alignItems="center" sx={{ mt: 4}}>
             <Button fullWidth type="button" variant="outlined" onClick={onClose} sx={{ mr: 1 }}>キャンセル</Button>
-            <Button fullWidth type="submit" variant="contained" color="success" sx={{ mr: 1 }}>更新</Button>
+            <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>更新</Button>
+            <Button fullWidth type="button" variant="contained" color="success" sx={{ mr: 1 }} onClick={onFinish}>
+              {completed && (<div>未完了に戻す</div>)}
+              {!completed && (<div>タスクを完了</div>)}
+            </Button>
             <Button fullWidth type="button" variant="outlined" color="error" onClick={onDelete}>削除</Button>
           </Box>
         </Box>

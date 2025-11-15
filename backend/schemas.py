@@ -50,6 +50,7 @@ class Task(BaseModel):
     startDate: datetime
     endDate: datetime
     DeleteFlg: bool
+    completed: bool
 
     class Config:
         from_attributes = True
@@ -57,9 +58,12 @@ class Task(BaseModel):
 class TaskCreate(BaseModel):
     name: Union[str, None] = None
     assigneeId: int
+    UserId: int
     startDate: datetime
     endDate: datetime
+    completed: bool = False
     DeleteFlg: bool = False
+    LastModified: datetime = datetime.now()
 
 class TaskUpdate(BaseModel):
     name: Union[str, None] = None
@@ -67,6 +71,7 @@ class TaskUpdate(BaseModel):
     startDate: Union[datetime, None] = None
     endDate: Union[datetime, None] = None
     DeleteFlg: Union[bool, None] = None
+    completed: bool = None
 
     class Config:
         from_attributes = True

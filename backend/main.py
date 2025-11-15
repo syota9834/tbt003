@@ -233,8 +233,9 @@ def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     - **skip**: 取得を開始するオフセット。
     - **limit**: 取得するTodoの最大数。
     """
-    tasks = db.query(models.TaskTBL).filter(
-        models.TaskTBL.DeleteFlg == False
+    tasks = db.query(models.TaskTBL).join(models.UserTBL).filter(
+        models.TaskTBL.DeleteFlg == False,
+        models.UserTBL.DeleteFlg == False
     ).offset(skip).limit(limit).all()
 
     return tasks
@@ -252,6 +253,7 @@ def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
         startDate = task.startDate,
         endDate = task.endDate,
         assigneeId = task.assigneeId,
+        UserId = task.assigneeId,
         DeleteFlg = task.DeleteFlg
     )
     db.add(db_task)  # データベースに追加

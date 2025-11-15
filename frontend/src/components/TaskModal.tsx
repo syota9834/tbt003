@@ -68,6 +68,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
           startDate: format(startDate, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
           endDate: format(endDate, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
           assigneeId: assigneeId,
+          UserId: assigneeId,
           DeleteFlg: false
         }),
       });
@@ -220,7 +221,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
           />
           <Box display="flex" alignItems="center" sx={{ mt: 4}}>
             <Button type="button" fullWidth variant="outlined" sx={{ mr: 1 }} onClick={onClose}>キャンセル</Button>
-            <Button type="submit" fullWidth variant="contained" color="success">追加</Button>
+            <Button type="submit" fullWidth variant="contained" color="primary">追加</Button>
           </Box>
         </Box>
       </Box>
