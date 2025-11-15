@@ -43,4 +43,4 @@ jobs:
           # 成果物があるディレクトリを指定
           publish_dir: ./frontend/dist 
           # サブディレクトリでのホストに対応
-          cname: syota9834.github.io/tbt003 # ここをリポジトリ名に合わせる
+          # cname: syota9834.github.io/tbt003 # カスタムドメインではないためコメントアウト
