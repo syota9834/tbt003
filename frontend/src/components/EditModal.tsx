@@ -13,14 +13,14 @@ interface EditModalProps {
   task: Task;
   assignees: Assignee[];
 }
-const FormErrorProps = {
-  error: false,
-  text: ""
-}
+//const FormErrorProps = {
+//  error: false,
+//  text: ""
+//}
 
 const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, onDeleteTask, task, assignees }) => {
   const [taskName, setTaskName] = useState<string>('');
-  const [formError, setFormError] = useState(FormErrorProps);
+  //const [formError, setFormError] = useState(FormErrorProps);
   const [assigneeId, setAssigneeId] = useState<number>(0); // 初期値を0または適切なデフォルト値に設定
   const [startDate, setStartDate] = useState<string>('');
   const [startTime, setStartTime] = useState<string>('');
@@ -45,19 +45,19 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
 
   const handleTaskName = (formTaskName: string) => {
     setTaskName(formTaskName);
-    if (!formTaskName.trim()){
-      setFormError({error: true, text: "タスク名を入力してください"});
-    }else{
-      setFormError(FormErrorProps);
-    }
+    //if (!formTaskName.trim()){
+    //  setFormError({error: true, text: "タスク名を入力してください"});
+    //}else{
+    //  setFormError(FormErrorProps);
+    //}
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!taskName.trim()){
-      setFormError({error: true, text: "タスク名を入力してください"});
-      return;
-    }
+    //if (!taskName.trim()){
+    //  setFormError({error: true, text: "タスク名を入力してください"});
+    //  return;
+    //}
     try {
       const response = await fetch(`${API_BASE_URL}/task/update/${task.id}`, {
         method: 'PUT',
@@ -85,10 +85,10 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
   };
 
   const onFinish = async () => {
-    if (!taskName.trim()){
-      setFormError({error: true, text: "タスク名を入力してください"});
-      return;
-    }
+    //if (!taskName.trim()){
+    //  setFormError({error: true, text: "タスク名を入力してください"});
+    //  return;
+    //}
     try {
       const response = await fetch(`${API_BASE_URL}/task/update/${task.id}`, {
         method: 'PUT',
@@ -163,8 +163,8 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
             name="taskName"
             autoFocus
             value={taskName}
-            error={formError.error}
-            helperText={formError.text}
+            //error={formError.error}
+            //helperText={formError.text}
             onChange={(e) => handleTaskName(e.target.value)}
           />
           <FormControl fullWidth margin="normal" required>
@@ -238,9 +238,8 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
           <Box display="flex" alignItems="center" sx={{ mt: 4}}>
             <Button fullWidth type="button" variant="outlined" onClick={onClose} sx={{ mr: 1 }}>キャンセル</Button>
             <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>更新</Button>
-            <Button fullWidth type="button" variant="contained" color="error" sx={{ mr: 1 }} onClick={onFinish}>
-              {completed && <div>未完了に戻す</div>}
-              {!completed && <div>タスクを完了</div>}
+            <Button fullWidth type="button" variant="contained" color="success" sx={{ mr: 1 }} onClick={onFinish}>
+              {completed ? '未完了に戻す' : 'タスクを完了'}
             </Button>
             <Button fullWidth type="button" variant="outlined" color="error" onClick={onDelete}>削除</Button>
           </Box>

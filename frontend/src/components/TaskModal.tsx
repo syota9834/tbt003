@@ -15,10 +15,10 @@ interface TaskModalProps {
   assignees: Assignee[];
 }
 
-const FormErrorProps = {
-  error: false,
-  text: ""
-}
+//const FormErrorProps = {
+//  error: false,
+//  text: ""
+//}
 
 const TaskModal: React.FC<TaskModalProps> = ({
   isOpen,
@@ -29,7 +29,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
   assignees,
 }) => {
   const [taskName, setTaskName] = useState('');
-  const [formError, setFormError] = useState(FormErrorProps);
+  //const [formError, setFormError] = useState(FormErrorProps);
   const [assigneeId, setAssigneeId] = useState<number>(initialAssigneeId);
   const [startDate, setStartDate] = useState(toZonedTime(initialDate, timeZone));
   const [endDate, setEndDate] = useState(new Date(toZonedTime(initialDate, timeZone).getTime() + 60 * 60 * 1000));
@@ -43,19 +43,19 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   const handleTaskName = (formTaskName: string) => {
     setTaskName(formTaskName);
-    if (!formTaskName.trim()){
-      setFormError({error: true, text: "タスク名を入力してください"});
-    }else{
-      setFormError(FormErrorProps);
-    }
+    //if (!formTaskName.trim()){
+    //  setFormError({error: true, text: "タスク名を入力してください"});
+    //}else{
+    //  setFormError(FormErrorProps);
+    //}
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!taskName.trim()){
-      setFormError({error: true, text: "タスク名を入力してください"});
-      return;
-    }
+    //if (!taskName.trim()){
+    //  setFormError({error: true, text: "タスク名を入力してください"});
+    //  return;
+    //}
     try {
       const response = await fetch(`${API_BASE_URL}/task`, {
         method: 'POST', // HTTPメソッドをPOSTに指定（新しいリソースの作成）
@@ -143,8 +143,8 @@ const TaskModal: React.FC<TaskModalProps> = ({
             name="taskName"
             autoFocus
             value={taskName}
-            error={formError.error}
-            helperText={formError.text}
+            //error={formError.error}
+            //helperText={formError.text}
             onChange={(e) => handleTaskName(e.target.value)}
           />
           <FormControl fullWidth margin="normal" required>
