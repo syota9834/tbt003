@@ -143,15 +143,24 @@ export default {
 
       // --- UserTBL エンドポイント ---
       if (pathname.includes('/user')) {
+        // 新規作成
         if (method === 'POST') {
           const { name, DeleteFlg } = await request.json() as UserRequestBody;
-          const { success } = await env.DB.prepare(
+          const result = await env.DB.prepare(
             'INSERT INTO UserTBL (name, DeleteFlg, LastModified) VALUES (?, ?, ?)'
           ).bind(name || null, DeleteFlg ? 1 : 0, new Date().toISOString()).run();
 
-          if (success) {
-            return new Response(JSON.stringify({ message: 'User created' }), {
-              status: 201,
+          if (result.success) {
+            const newUserId = result.meta.last_row_id;
+            const { results } = await env.DB.prepare('SELECT * FROM UserTBL WHERE id = ?').bind(newUserId).all();
+            if (results.length > 0) {
+              return new Response(JSON.stringify(results[0]), {
+                status: 201,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+              });
+            }
+            return new Response(JSON.stringify({ error: 'Created user not found' }), {
+              status: 404,
               headers: { 'Content-Type': 'application/json', ...corsHeaders },
             });
           }
@@ -160,6 +169,7 @@ export default {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
+        // 一覧取得
         if (method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM UserTBL').all();
           if (results.length > 0) {
@@ -173,6 +183,7 @@ export default {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
+        // IDの検証
         const id = pathname.split('/').pop(); // IDを抽出
         if (!id || isNaN(Number(id))) {
           return new Response(JSON.stringify({ error: 'Invalid User ID' }), {
@@ -180,7 +191,7 @@ export default {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
-        
+        // 更新
         if (method === 'PUT') {
           const { name, DeleteFlg } = await request.json() as UserRequestBody;
           const { success } = await env.DB.prepare(
@@ -188,8 +199,15 @@ export default {
           ).bind(name || null, DeleteFlg ? 1 : 0, new Date().toISOString(), id).run();
 
           if (success) {
-            return new Response(JSON.stringify({ message: 'User updated' }), {
-              status: 200,
+            const { results } = await env.DB.prepare('SELECT * FROM UserTBL WHERE id = ?').bind(id).all();
+            if (results.length > 0) {
+              return new Response(JSON.stringify(results[0]), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+              });
+            }
+            return new Response(JSON.stringify({ error: 'Updated user not found' }), {
+              status: 404,
               headers: { 'Content-Type': 'application/json', ...corsHeaders },
             });
           }
@@ -215,9 +233,10 @@ export default {
 
       // --- TaskTBL エンドポイント ---
       if (pathname === '/task') {
+        // 新規作成
         if (method === 'POST') {
           const { name, startDate, endDate, UserId, assigneeId, DeleteFlg, completed } = await request.json() as TaskRequestBody;
-          const { success } = await env.DB.prepare(
+          const result = await env.DB.prepare(
             'INSERT INTO TaskTBL (name, startDate, endDate, UserId, assigneeId, DeleteFlg, completed, LastModified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
           ).bind(
             name || null,
@@ -229,10 +248,18 @@ export default {
             completed ? 1 : 0,
             new Date().toISOString()
           ).run();
-
-          if (success) {
-            return new Response(JSON.stringify({ message: 'Task created' }), {
-              status: 201,
+          if (result.success) {
+            const newTaskId = result.meta.last_row_id;
+            // 作成されたタスクを再度取得して返す
+            const { results } = await env.DB.prepare('SELECT * FROM TaskTBL WHERE id = ?').bind(newTaskId).all();
+            if (results.length > 0) {
+              return new Response(JSON.stringify(results[0]), {
+                status: 201, // Created
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+              });
+            }
+            return new Response(JSON.stringify({ error: 'Created task not found' }), {
+              status: 404,
               headers: { 'Content-Type': 'application/json', ...corsHeaders },
             });
           }
@@ -240,12 +267,14 @@ export default {
             status: 500,
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
+        // 一覧取得
         } else if (method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM TaskTBL').all();
           return new Response(JSON.stringify(results), {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
+      // 更新
       } else if (pathname.includes('/task/update')) {
         const id = pathname.split('/').pop(); // IDを抽出
         if (!id || isNaN(Number(id))) {

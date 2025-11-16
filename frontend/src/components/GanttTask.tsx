@@ -21,7 +21,7 @@ const GanttTask: React.FC<GanttTaskProps> = ({ task, style, onClick }) => {
         height: '80%',
         paddingTop: "5px",
         top: '10%',
-        backgroundColor: task.completed ? 'success.main' : 'primary.main',
+        backgroundColor: task.completed ? 'error.main' : 'primary.main',
         color: 'white',
         alignItems: 'center',
         textAlign: 'center',
@@ -34,7 +34,7 @@ const GanttTask: React.FC<GanttTaskProps> = ({ task, style, onClick }) => {
         display: 'block',
         boxSizing: 'border-box',
         '&:hover': {
-                  backgroundColor: task.completed ? "#195e1dff" : '#0058b1ff',
+                  backgroundColor: task.completed ? "#5e2319ff" : '#0058b1ff',
                 },
         ...style,
       }}

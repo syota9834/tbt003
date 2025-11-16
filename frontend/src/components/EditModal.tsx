@@ -238,9 +238,9 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
           <Box display="flex" alignItems="center" sx={{ mt: 4}}>
             <Button fullWidth type="button" variant="outlined" onClick={onClose} sx={{ mr: 1 }}>キャンセル</Button>
             <Button fullWidth type="submit" variant="contained" color="primary" sx={{ mr: 1 }}>更新</Button>
-            <Button fullWidth type="button" variant="contained" color="success" sx={{ mr: 1 }} onClick={onFinish}>
-              {completed && (<div>未完了に戻す</div>)}
-              {!completed && (<div>タスクを完了</div>)}
+            <Button fullWidth type="button" variant="contained" color="error" sx={{ mr: 1 }} onClick={onFinish}>
+              {completed && <div>未完了に戻す</div>}
+              {!completed && <div>タスクを完了</div>}
             </Button>
             <Button fullWidth type="button" variant="outlined" color="error" onClick={onDelete}>削除</Button>
           </Box>

@@ -146,7 +146,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
           sx={{ width: '100%' }} // 親要素の幅いっぱいに広げる
         >
           <ListItemIcon>
-            <SquareIcon color="success" />：完了
+            <SquareIcon color="error" />：完了
             &emsp;
             <SquareIcon color="primary" />：未完了
           </ListItemIcon>
