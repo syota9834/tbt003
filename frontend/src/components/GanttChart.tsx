@@ -31,6 +31,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedAssigneeId, setSelectedAssigneeId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true); // ローディング状態を追加
+  const [targetEndDate, setTargetEndDate] = useState(6);
 
   const getUserData = async () =>{
     try {
@@ -57,6 +58,10 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
       console.error("Failed to fetch tasks:", error); // エラーメッセージを修正
     }
   }
+
+  const handleSetTargetEndDate = (dateNum: number) => {
+    setTargetEndDate(dateNum);
+  };
 
   const handleOpenEditModal = (task: Task) => {
     setSelectedTask(task);
@@ -96,7 +101,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   };
 
   const startDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
-  const endDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 6);  // システム日付から１週間
+  const endDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + targetEndDate);
 
   const dates: Date[] = [];  // 日付ヘッダー
   const bgs: { [key: string]: any } = {};   // 辞書型の日付背景
@@ -151,11 +156,38 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
             <SquareIcon color="primary" />：未完了
           </ListItemIcon>
           <Typography>
-            <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
+            <Button variant="outlined" onClick={() => handleSetTargetEndDate(0)}>
+              1日表示
+            </Button>
+            <Button variant="outlined" onClick={() => handleSetTargetEndDate(1)}>
+              2日表示
+            </Button>
+            <Button variant="outlined" onClick={() => handleSetTargetEndDate(2)}>
+              3日表示
+            </Button>
+            <Button variant="outlined" onClick={() => handleSetTargetEndDate(3)}>
+              4日表示
+            </Button>
+            <Button variant="outlined" onClick={() => handleSetTargetEndDate(4)}>
+              5日表示
+            </Button>
+            <Button variant="outlined" onClick={() => handleSetTargetEndDate(5)}>
+              6日表示
+            </Button>
+            <Button variant="outlined" onClick={() => handleSetTargetEndDate(6)}>
+              7日表示
+            </Button>
+            <Button variant="outlined" sx={{ ml: 1 }} onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 7))}>
               ＜＜
+            </Button>
+            <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() - 1))}>
+              ＜
             </Button>
             <Button variant="outlined" sx={{ mx: 1 }} onClick={() => setTargetDate(new Date())}>
               今日
+            </Button>
+            <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 1))}>
+              ＞
             </Button>
             <Button variant="outlined" onClick={() => setTargetDate(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + 7))}>
               ＞＞

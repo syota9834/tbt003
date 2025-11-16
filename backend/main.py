@@ -186,7 +186,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return todos
 
 @app.post(
-    "/user/create",
+    "/user",
     response_model=schemas.User,
     tags=["User"],
     summary="ユーザーを新規作成",
@@ -241,7 +241,7 @@ def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return tasks
 
 @app.post(
-    "/task/create",
+    "/task",
     response_model=schemas.Task, # レスポンスのスキーマを指定
     tags=["Task"],
     summary="タスクを新規作成",
@@ -285,7 +285,7 @@ def update_task(task_id: int, task: schemas.TaskUpdate, db: Session = Depends(ge
     return db_task
 
 @app.delete(
-    "/task/delete/{task_id}",
+    "/task/update/{task_id}",
     tags=["Task"],
     summary="タスクを削除",
     status_code=status.HTTP_204_NO_CONTENT,
