@@ -142,7 +142,7 @@ export default {
       }
 
       // --- UserTBL エンドポイント ---
-      if (pathname === '/user') {
+      if (pathname.startsWith('/user')) {
         if (method === 'POST') {
           const { name, DeleteFlg } = await request.json() as UserRequestBody;
           const { success } = await env.DB.prepare(
@@ -159,16 +159,62 @@ export default {
             status: 500,
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
-        } else if (method === 'GET') {
+        }
+        if (method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM UserTBL').all();
-          return new Response(JSON.stringify(results), {
+          if (results.length > 0) {
+            return new Response(JSON.stringify(results), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json', ...corsHeaders },
+            });
+          }
+          return new Response(JSON.stringify({ error: 'User not found' }), {
+            status: 404,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          });
+        }
+        const id = pathname.split('/').pop(); // IDを抽出
+        if (!id || isNaN(Number(id))) {
+          return new Response(JSON.stringify({ error: 'Invalid User ID' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          });
+        }
+        
+        if (method === 'PUT') {
+          const { name, DeleteFlg } = await request.json() as UserRequestBody;
+          const { success } = await env.DB.prepare(
+            'UPDATE UserTBL SET name = ?, DeleteFlg = ?, LastModified = ? WHERE id = ?'
+          ).bind(name || null, DeleteFlg ? 1 : 0, new Date().toISOString(), id).run();
+
+          if (success) {
+            return new Response(JSON.stringify({ message: 'User updated' }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json', ...corsHeaders },
+            });
+          }
+          return new Response(JSON.stringify({ error: 'Failed to update user' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          });
+        } else if (method === 'DELETE') {
+          const { success } = await env.DB.prepare('DELETE FROM UserTBL WHERE id = ?').bind(id).run();
+
+          if (success) {
+            return new Response(JSON.stringify({ message: 'User deleted' }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json', ...corsHeaders },
+            });
+          }
+          return new Response(JSON.stringify({ error: 'Failed to delete user' }), {
+            status: 500,
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
       }
 
       // --- TaskTBL エンドポイント ---
-      if (pathname === '/task') {
+      if (pathname.startsWith('/task')) {
         if (method === 'POST') {
           const { name, startDate, endDate, UserId, assigneeId, DeleteFlg, completed } = await request.json() as TaskRequestBody;
           const { success } = await env.DB.prepare(
@@ -200,7 +246,6 @@ export default {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
-      } else if (pathname.startsWith('/task/')) {
         const id = pathname.split('/').pop(); // IDを抽出
         if (!id || isNaN(Number(id))) {
           return new Response(JSON.stringify({ error: 'Invalid Task ID' }), {

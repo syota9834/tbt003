@@ -65,7 +65,7 @@ function Manage(){
     }));
   };
 
-  const removeUser = async (userId: string, deleteFlg: boolean) => {
+  const removeUser = async (userName: string, userId: string, deleteFlg: boolean) => {
     try {
       const response = await fetch(`${API_BASE_URL}/user/${userId}`, {
         method: 'PUT', // HTTPメソッドをPOSTに指定（新しいリソースの作成）
@@ -74,6 +74,7 @@ function Manage(){
         },
         // 送信するデータ（新しいTodoのタイトルと完了状態）をJSON文字列に変換してボディに含める
         body: JSON.stringify({
+          name: userName,
           DeleteFlg: deleteFlg
         }),
       });
@@ -141,7 +142,7 @@ function Manage(){
                   key={user.id}
                   secondaryAction={
                     <>
-                      <IconButton edge="end" aria-label="削除" onClick={() => removeUser(String(user.id), !user.DeleteFlg)}>
+                      <IconButton edge="end" aria-label="削除" onClick={() => removeUser(String(user.name), String(user.id), !user.DeleteFlg)}>
                         <DeleteIcon color="error" />
                       </IconButton>
                     </>
@@ -165,7 +166,7 @@ function Manage(){
                   key={user.id}
                   secondaryAction={
                     <>
-                      <IconButton edge="end" aria-label="戻す" onClick={() => removeUser(String(user.id), !user.DeleteFlg)}>
+                      <IconButton edge="end" aria-label="戻す" onClick={() => removeUser(String(user.name), String(user.id), !user.DeleteFlg)}>
                         <RadioButtonUncheckedIcon color="success" />
                       </IconButton>
                     </>
