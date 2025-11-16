@@ -35,7 +35,7 @@ function Manage(){
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/user/create`, {
+      const response = await fetch(`${API_BASE_URL}/user`, {
         method: 'POST', // HTTPメソッドをPOSTに指定（新しいリソースの作成）
         headers: {
           'Content-Type': 'application/json', // リクエストボディの形式がJSONであることを指定

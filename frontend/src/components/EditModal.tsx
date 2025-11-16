@@ -59,7 +59,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/task/update/${task.id}`, {
+      const response = await fetch(`${API_BASE_URL}/task/${task.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/task/update/${task.id}`, {
+      const response = await fetch(`${API_BASE_URL}/task/${task.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
 
   const onDelete = async() => {
     try {
-      const response = await fetch(`${API_BASE_URL}/task/delete/${task.id}`, {
+      const response = await fetch(`${API_BASE_URL}/task/${task.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json', 
