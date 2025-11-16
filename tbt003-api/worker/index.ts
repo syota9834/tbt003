@@ -283,8 +283,16 @@ export default {
           ).run();
 
           if (success) {
-            return new Response(JSON.stringify({ message: 'Task updated' }), {
-              status: 200,
+            // 更新されたタスクを再度取得して返す
+            const { results } = await env.DB.prepare('SELECT * FROM TaskTBL WHERE id = ?').bind(id).all();
+            if (results.length > 0) {
+              return new Response(JSON.stringify(results[0]), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+              });
+            }
+            return new Response(JSON.stringify({ error: 'Updated task not found' }), {
+              status: 404,
               headers: { 'Content-Type': 'application/json', ...corsHeaders },
             });
           }
@@ -296,6 +304,14 @@ export default {
           const { success } = await env.DB.prepare('DELETE FROM TaskTBL WHERE id = ?').bind(id).run();
 
           if (success) {
+            // 更新されたタスクを再度取得して返す
+            const { results } = await env.DB.prepare('SELECT * FROM TaskTBL WHERE id = ?').bind(id).all();
+            if (results.length > 0) {
+              return new Response(JSON.stringify(results[0]), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json', ...corsHeaders },
+              });
+            }
             return new Response(JSON.stringify({ message: 'Task deleted' }), {
               status: 200,
               headers: { 'Content-Type': 'application/json', ...corsHeaders },

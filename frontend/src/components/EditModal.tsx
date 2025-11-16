@@ -68,6 +68,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
           name: taskName,
           startDate: format(`${startDate}T${startTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
           endDate: format(`${endDate}T${endTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+          UserId: assigneeId,
           assigneeId: assigneeId,
           completed: false,
           DeleteFlg: false
@@ -98,6 +99,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onUpdateTask, on
           name: taskName,
           startDate: format(`${startDate}T${startTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
           endDate: format(`${endDate}T${endTime}`, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone }),
+          UserId: assigneeId,
           assigneeId: assigneeId,
           completed: !completed,
           DeleteFlg: false
