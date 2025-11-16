@@ -2,6 +2,7 @@
 # node_modulesはfrontend/以下にあるため、そのパスで除外
 exclude:
   - backend/
+  - tbt003-api
   - frontend/node_modules/
   - frontend/package.json
   - frontend/package-lock.json
