@@ -18,7 +18,7 @@ function App(){
   // 祝日の取得
   const fetchHoliday = async () => {
     try {
-      const response = await fetch("http://api.national-holidays.jp/all");
+      const response = await fetch("https://api.national-holidays.jp/all");
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
