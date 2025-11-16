@@ -142,7 +142,7 @@ export default {
       }
 
       // --- UserTBL エンドポイント ---
-      if (pathname.startsWith('/user')) {
+      if (pathname.includes('/user')) {
         if (method === 'POST') {
           const { name, DeleteFlg } = await request.json() as UserRequestBody;
           const { success } = await env.DB.prepare(
@@ -246,7 +246,7 @@ export default {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
-      } else if (pathname.startsWith('/task/')) {
+      } else if (pathname.includes('/task/update')) {
         const id = pathname.split('/').pop(); // IDを抽出
         if (!id || isNaN(Number(id))) {
           return new Response(JSON.stringify({ error: 'Invalid Task ID' }), {
