@@ -214,7 +214,7 @@ export default {
       }
 
       // --- TaskTBL エンドポイント ---
-      if (pathname.startsWith('/task')) {
+      if (pathname === '/task') {
         if (method === 'POST') {
           const { name, startDate, endDate, UserId, assigneeId, DeleteFlg, completed } = await request.json() as TaskRequestBody;
           const { success } = await env.DB.prepare(
@@ -246,6 +246,7 @@ export default {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
+      } else if (pathname.startsWith('/task/')) {
         const id = pathname.split('/').pop(); // IDを抽出
         if (!id || isNaN(Number(id))) {
           return new Response(JSON.stringify({ error: 'Invalid Task ID' }), {
@@ -253,7 +254,6 @@ export default {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           });
         }
-
         if (method === 'GET') {
           const { results } = await env.DB.prepare('SELECT * FROM TaskTBL WHERE id = ?').bind(id).all();
           if (results.length > 0) {

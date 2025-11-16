@@ -57,7 +57,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/task/create`, {
+      const response = await fetch(`${API_BASE_URL}/task`, {
         method: 'POST', // HTTPメソッドをPOSTに指定（新しいリソースの作成）
         headers: {
           'Content-Type': 'application/json', // リクエストボディの形式がJSONであることを指定
