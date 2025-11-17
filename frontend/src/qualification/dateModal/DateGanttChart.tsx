@@ -89,7 +89,7 @@ const DateGanttChart: React.FC<DateGanttChartProps> = ({isOpen, onClose, selecte
             ) : (
               tasks.map(task => (
                 <div>
-                  {!getAssigneeName(task.assigneeId).startsWith("_") ? 
+                  {getAssigneeName(task.assigneeId).startsWith("_") ? 
                   <Box key={task.id} sx={{ mb: 2, p: 2, border: '1px solid #eee', borderRadius: '4px' }}>
                     <Typography variant="body2">タスク名：{getAssigneeName(task.assigneeId)}</Typography>
                     <Typography variant="body2">タイトル：{task.name}</Typography>

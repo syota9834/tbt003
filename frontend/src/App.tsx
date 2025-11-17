@@ -4,6 +4,7 @@ import Todo from "./Todo"
 import Manage from "./Manage"
 import Log from "./Log"
 import GanttChart from "./components/GanttChart";
+import QualificationGanttChart from "./qualification/GanttChart";
 import { Grid } from '@mui/material';
 
 
@@ -44,6 +45,13 @@ function App(){
         <Routes>
           <Route path="/"
             element={<GanttChart
+              targetDate={targetDate}
+              setTargetDate={handleSetTargetDate}
+              dicHolidays={dicHolidays}
+            />}
+          />
+          <Route path="/qualification"
+            element={<QualificationGanttChart
               targetDate={targetDate}
               setTargetDate={handleSetTargetDate}
               dicHolidays={dicHolidays}

@@ -22,7 +22,7 @@ interface gantt {
   dicHolidays: { [key: string]: any };
 }
 
-const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) => {
+const QualificationGanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) => {
   const [assignees, setAssignees] = useState<Assignee[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -208,7 +208,7 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
                   <Box sx={{ flexGrow: 1, overflowX: 'auto', display: 'flex', flexDirection: 'column' }}>
                     <GanttHeader dates={dates} bgs={bgs} />
                     <Box sx={{ position: 'relative', cursor: "pointer", flexGrow: 1 }}>
-                      {assignees.filter(assignee => !assignee.DeleteFlg && !assignee.name.startsWith("_")).map(assignee => (
+                      {assignees.filter(assignee => !assignee.DeleteFlg && assignee.name.startsWith("_") ).map(assignee => (
                         <GanttRow
                           key={assignee.id}
                           assignee={assignee}
@@ -249,4 +249,4 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
   );
 };
 
-export default GanttChart;
+export default QualificationGanttChart;

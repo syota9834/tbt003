@@ -12,7 +12,7 @@ const GanttSidebar: React.FC<GanttSidebarProps> = ({ assignees }) => {
       <Box sx={{ p: '9.5px', fontWeight: 'bold', borderBottom: '1px solid #ccc', backgroundColor: 'white' }}>
         <Typography>タスク名</Typography>
       </Box>
-      {assignees.filter(assignee => !assignee.DeleteFlg && !assignee.name.startsWith("_")).map(assignee => (
+      {assignees.filter(assignee => !assignee.DeleteFlg && assignee.name.startsWith("_")).map(assignee => (
         <Box key={assignee.id} sx={{
           pl: "10px",
           pr: "10px",
