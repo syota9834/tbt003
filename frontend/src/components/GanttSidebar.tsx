@@ -9,7 +9,7 @@ interface GanttSidebarProps {
 const GanttSidebar: React.FC<GanttSidebarProps> = ({ assignees }) => {
   return (
     <Box sx={{ width: '150px', flexShrink: 0, borderRight: '1px solid #ccc', backgroundColor: 'white' }}>
-      <Box sx={{ p: '10px', fontWeight: 'bold', borderBottom: '1px solid #ccc', backgroundColor: 'white' }}>
+      <Box sx={{ p: '9.5px', fontWeight: 'bold', borderBottom: '1px solid #ccc', backgroundColor: 'white' }}>
         <Typography>タスク名</Typography>
       </Box>
       {assignees.filter(assignee => !assignee.DeleteFlg).map(assignee => (

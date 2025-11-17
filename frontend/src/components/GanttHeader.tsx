@@ -30,7 +30,6 @@ const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
           const zonedDate = toZonedTime(date, timeZone);
           const dateKey = format(zonedDate, 'yyyy-MM-dd', { timeZone });
           const style = bgs[dateKey] || {};
-          const targetDate = "a"
 
           return (
             <Box
@@ -38,7 +37,6 @@ const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
               key={date.toISOString()}
               sx={{
                 flex: 1,
-                p: '10px',
                 textAlign: 'center',
                 borderRight: '1px solid #ccc',
                 cursor: 'pointer',
@@ -48,7 +46,7 @@ const GanttHeader: React.FC<GanttHeaderProps> = ({ dates, bgs }) => {
                 ...style
               }}
             >
-              <Typography noWrap>{format(toZonedTime(zonedDate, timeZone), 'M/d (E)', { locale: ja })}</Typography>
+              <Typography noWrap sx={{ borderBottom: '1px solid #ccc', p: '10px', pb: 1 }}>{format(toZonedTime(zonedDate, timeZone), 'M/d (E)', { locale: ja })}</Typography>
             </Box>
           );
         })}

@@ -34,7 +34,20 @@ const GanttRow: React.FC<GanttRowProps> = ({ assignee, tasks, dates, onCellClick
               backgroundColor: '#f0f0f0',
             },
           }}
-          onClick={() => onCellClick(date, assignee.id)}
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const offsetX = e.clientX - rect.left;
+            const cellWidth = e.currentTarget.offsetWidth;
+            const clickHour = Math.floor((offsetX / cellWidth) * 24);
+            const clickedDate = new Date(date);
+            clickedDate.setHours(clickHour);
+            // 60分単位で丸める
+            clickedDate.setMinutes(0);
+            clickedDate.setSeconds(0);
+            clickedDate.setMilliseconds(0);
+
+            onCellClick(clickedDate, assignee.id);
+          }}
         />
       ))}
 

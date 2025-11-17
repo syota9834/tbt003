@@ -205,9 +205,9 @@ const GanttChart: React.FC<gantt> = ({targetDate, setTargetDate, dicHolidays}) =
               <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', border: '1px solid #ccc', fontFamily: 'Arial, sans-serif' }}>
                 <Box sx={{ display: 'flex', width: '100%' }}>
                   <GanttSidebar assignees={assignees} />
-                  <Box sx={{ flexGrow: 1, overflowX: 'auto' }}>
+                  <Box sx={{ flexGrow: 1, overflowX: 'auto', display: 'flex', flexDirection: 'column' }}>
                     <GanttHeader dates={dates} bgs={bgs} />
-                    <Box sx={{ position: 'relative', cursor: "pointer" }}>
+                    <Box sx={{ position: 'relative', cursor: "pointer", flexGrow: 1 }}>
                       {assignees.filter(assignee => !assignee.DeleteFlg).map(assignee => (
                         <GanttRow
                           key={assignee.id}

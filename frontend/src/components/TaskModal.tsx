@@ -31,15 +31,14 @@ const TaskModal: React.FC<TaskModalProps> = ({
   const [taskName, setTaskName] = useState('');
   //const [formError, setFormError] = useState(FormErrorProps);
   const [assigneeId, setAssigneeId] = useState<number>(initialAssigneeId);
-  const [startDate, setStartDate] = useState(toZonedTime(initialDate, timeZone));
-  const [endDate, setEndDate] = useState(new Date(toZonedTime(initialDate, timeZone).getTime() + 60 * 60 * 1000));
-
-  useEffect(() => {
-    setAssigneeId(initialAssigneeId);
+  const [startDate, setStartDate] = useState(() => {
     const zonedInitialDate = toZonedTime(initialDate, timeZone);
-    setStartDate(zonedInitialDate);
-    setEndDate(new Date(zonedInitialDate.getTime() + 60 * 60 * 1000));
-  }, [initialAssigneeId, initialDate]);
+    return zonedInitialDate;
+  });
+  const [endDate, setEndDate] = useState(() => {
+    const zonedInitialDate = toZonedTime(initialDate, timeZone);
+    return new Date(zonedInitialDate.getTime() + 60 * 60 * 1000);
+  });
 
   const handleTaskName = (formTaskName: string) => {
     setTaskName(formTaskName);
@@ -124,7 +123,10 @@ const TaskModal: React.FC<TaskModalProps> = ({
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 800,
+        width: '90%',
+        maxWidth: 800,
+        maxHeight: '80vh',
+        overflowY: 'auto',
         bgcolor: 'background.paper',
         border: '2px solid #000',
         boxShadow: 24,
@@ -190,7 +192,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
             InputLabelProps={{
               shrink: true,
             }}
-            inputProps={{ step: 1800 }} // 30分刻み
+            inputProps={{ step: 3600 }} // 60分刻み
           />
           <TextField
             margin="normal"
@@ -217,7 +219,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
             InputLabelProps={{
               shrink: true,
             }}
-            inputProps={{ step: 1800 }} // 30分刻み
+            inputProps={{ step: 3600 }} // 60分刻み
           />
           <Box display="flex" alignItems="center" sx={{ mt: 4}}>
             <Button type="button" fullWidth variant="outlined" sx={{ mr: 1 }} onClick={onClose}>キャンセル</Button>
