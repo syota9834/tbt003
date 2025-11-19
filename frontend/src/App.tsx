@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Todo from "./Todo"
 import Manage from "./Manage"
 import Log from "./Log"
+import Metricrs from "./metrics/Metrics";
 import GanttChart from "./components/GanttChart";
 import QualificationGanttChart from "./qualification/GanttChart";
 import { Grid } from '@mui/material';
@@ -43,21 +44,10 @@ function App(){
     <>
     <Grid container spacing={2}>
         <Routes>
-          <Route path="/"
-            element={<GanttChart
-              targetDate={targetDate}
-              setTargetDate={handleSetTargetDate}
-              dicHolidays={dicHolidays}
-            />}
-          />
-          <Route path="/qualification"
-            element={<QualificationGanttChart
-              targetDate={targetDate}
-              setTargetDate={handleSetTargetDate}
-              dicHolidays={dicHolidays}
-            />}
-          />
-          <Route path="manage" element={<Manage />} />
+          <Route path="/" element={<GanttChart targetDate={targetDate} setTargetDate={handleSetTargetDate} dicHolidays={dicHolidays} />}/>
+          <Route path="/metrics" element={<Metricrs />} />
+          <Route path="/qualification" element={<QualificationGanttChart targetDate={targetDate} setTargetDate={handleSetTargetDate} dicHolidays={dicHolidays} />} />
+          <Route path="/manage" element={<Manage />} />
           <Route path="/daily" element={<Todo />} />
           <Route path="/log" element={<Log />} />
         </Routes>

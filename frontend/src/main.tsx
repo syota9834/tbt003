@@ -13,11 +13,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
        <AppBar position="sticky" sx={{top: 0}}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            テストアプリ
+            タスク管理アプリ
           </Typography>
-          <Button component={NavLink} to="/qualification" color="inherit">資格</Button>
-          <Button component={NavLink} to="/" color="inherit">タスク一覧</Button>
-          <Button component={NavLink} to="/manage" color="inherit">タスク管理</Button>
+          <Button className="btn-hover" component={NavLink} to="/qualification" color="inherit">資格</Button>
+          <div style={{ padding: 10 }}>/</div>
+          <Button className="btn-hover" component={NavLink} to="/metrics" color="inherit">メトリクス</Button>
+          <div style={{ padding: 10 }}>/</div>
+          <Button className="btn-hover" component={NavLink} to="/" color="inherit">タスク一覧</Button>
+          <div style={{ padding: 10 }}>/</div>
+          <Button className="btn-hover" component={NavLink} to="/manage" color="inherit">タスク管理</Button>
         </Toolbar>
       </AppBar>
       <Container maxWidth={false} sx={{ mt: 5,  width: 'auto'}}>

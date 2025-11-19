@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Query, Path
 from sqlalchemy.orm import Session
+from sqlalchemy import func, and_ # and_をインポート
 from typing import List, Union
 import models, schemas
 from database import SessionLocal, engine, get_db
@@ -298,3 +299,44 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.delete(db_todo)
     db.commit()
     return {"message": "Todo deleted successfully"}
+
+
+@app.get(
+    "/metrics/completed_task_time_by_user",
+    tags=["Metrics"],
+    summary="ユーザーごとの完了タスク合計時間を取得",
+)
+def get_completed_task_time_by_user(db: Session = Depends(get_db)):
+    """
+    各ユーザーが完了したタスクの合計時間を取得します。
+    結果はユーザー名と合計時間（分単位）のリストとして返されます。
+    """
+
+    duration_minutes = (
+        func.strftime('%s', models.TaskTBL.endDate) -
+        func.strftime('%s', models.TaskTBL.startDate)
+    ) / 60
+
+    results = db.query(
+        models.UserTBL.name,
+        func.coalesce(func.sum(duration_minutes), 0)
+    ).outerjoin(
+        models.TaskTBL,
+        and_(
+            models.UserTBL.id == models.TaskTBL.UserId,
+            models.TaskTBL.completed == True,
+            models.TaskTBL.DeleteFlg == False,
+        )
+    ).filter(
+        models.UserTBL.name.like('\_%', escape='\\'),
+        models.UserTBL.DeleteFlg == False
+    ).group_by(models.UserTBL.name).all()
+
+    # 結果を辞書のリストに変換
+    formatted_results = []
+    for name, total_minutes in results:
+        formatted_results.append({
+            "name": name,
+            "completedTime": round(total_minutes) if total_minutes else 0
+        })
+    return formatted_results

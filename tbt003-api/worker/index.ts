@@ -352,6 +352,51 @@ export default {
           });
         }
       }
+      // --- TaskTBL エンドポイント ---
+      if (pathname === '/metrics/completed_task_time_by_user') {
+        try {
+          const sql = `
+            SELECT 
+              u.name AS name,
+              COALESCE(
+                SUM(
+                  (strftime('%s', t.endDate) - strftime('%s', t.startDate)) / 60.0
+                ),
+                0
+              ) AS completedTime
+            FROM UserTBL u
+            LEFT JOIN TaskTBL t
+              ON u.id = t.UserId
+              AND t.completed = 1
+              AND t.DeleteFlg = 0
+            WHERE 
+              u.name LIKE '\\_%' ESCAPE '\\'
+              AND u.DeleteFlg = 0
+            GROUP BY u.name;
+          `;
+
+          const result = await env.DB.prepare(sql).all();
+
+          // result = { results: [...], success: true }
+
+          const formatted = result.results.map((row: any) => ({
+            name: row.name,
+            completedTime: Math.round(row.completedTime ?? 0)
+          }));
+
+          return new Response(JSON.stringify(formatted), {
+            headers: { "Content-Type": "application/json" },
+            status: 200
+          });
+
+        } catch (err) {
+          console.error(err);
+          return new Response(JSON.stringify({ error: "Internal Server Error" }), {
+            headers: { "Content-Type": "application/json" },
+            status: 500
+          });
+        }
+      }
 
       // 未定義のルートのハンドリング
       return new Response(JSON.stringify({ error: 'Not Found.' }), { status: 404, headers: corsHeaders });
