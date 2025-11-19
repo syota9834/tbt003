@@ -385,14 +385,14 @@ export default {
           }));
 
           return new Response(JSON.stringify(formatted), {
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...corsHeaders },
             status: 200
           });
 
         } catch (err) {
           console.error(err);
           return new Response(JSON.stringify({ error: "Internal Server Error" }), {
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...corsHeaders },
             status: 500
           });
         }

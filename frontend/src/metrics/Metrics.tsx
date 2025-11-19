@@ -57,7 +57,7 @@ const Metrics = () => {
           <Grid>
             <Paper elevation={3} sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
-                ユーザーごとの完了タスク時間
+                完了タスク時間
               </Typography>
               <div style={{ width: '100%', height: "70vh" }}>
                 <ResponsiveContainer width="100%" height="100%">
