@@ -52,38 +52,34 @@ const Metrics = () => {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1, p: 3 }}>
-        <Grid container spacing={3}>
-          <Grid>
-            <Paper elevation={3} sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                完了タスク時間
-              </Typography>
-              <div style={{ width: '100%', height: "70vh" }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    width={500}
-                    height={300}
-                    data={metricsData}
-                    margin={{
-                      top: 20,
-                      right: 30,
-                      left: 20,
-                      bottom: 0,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" angle={-90} textAnchor="end" interval={0} height={200}/>
-                    <YAxis tickFormatter={formatMinutesToHours} label={{ value: '', angle: -90, position: 'insideLeft' }} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend />
-                    <Bar dataKey="completedTime" fill="#8884d8" name="完了時間" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </Paper>
-          </Grid>
-        </Grid>
+      <Box sx={{ flexGrow: 1}}>
+        <Paper elevation={3} sx={{ p: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            完了タスク時間
+          </Typography>
+          <div style={{ width: '100%', height: "70vh" }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                width={500}
+                height={300}
+                data={metricsData}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 0,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" angle={-90} textAnchor="end" interval={0} height={200}/>
+                <YAxis tickFormatter={formatMinutesToHours} label={{ value: '', angle: -90, position: 'insideLeft' }} />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+                <Bar dataKey="completedTime" fill="#8884d8" name="完了時間" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Paper>
       </Box>
     </>
   );
