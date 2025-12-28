@@ -18,7 +18,7 @@ pipeline {
             steps {
                 sh '''
                 sudo rm -rf /var/www/html/*
-                sudo cp -r frontend/dist/* /var/www/html/
+                sudo cp -r frontend/dist/* /var/www/html/tbt003/
                 '''
             }
         }
