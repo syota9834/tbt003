@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           </Typography>
           <Button className="btn-hover" component={NavLink} to="/qualification" color="inherit">資格</Button>
           <div style={{ padding: 10 }}>/</div>
-          <Button className="btn-hover" component={NavLink} to="/metrics" color="inherit">メトリクス</Button>
+          <Button className="btn-hover" component={NavLink} to="/metrics" color="inherit">集計</Button>
           <div style={{ padding: 10 }}>/</div>
           <Button className="btn-hover" component={NavLink} to="/" color="inherit">タスク一覧</Button>
           <div style={{ padding: 10 }}>/</div>
