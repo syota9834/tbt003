@@ -17,7 +17,7 @@ pipeline {
         stage('Frontend Deploy to Apache') {
             steps {
                 sh '''
-                sudo rm -rf /var/www/html/*
+                sudo rm -rf /var/www/html/tbt003/*
                 sudo cp -r frontend/dist/* /var/www/html/tbt003/
                 '''
             }
