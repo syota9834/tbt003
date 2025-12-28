@@ -11,7 +11,15 @@ pipeline {
       	              node node_modules/typescript/bin/tsc
                       node node_modules/vite/bin/vite.js build
     	            '''
-		}
+		        }
+            }
+        }
+        stage('Frontend Deploy to Apache') {
+            steps {
+                sh '''
+                sudo rm -rf /var/www/html/*
+                sudo cp -r frontend/dist/* /var/www/html/
+                '''
             }
         }
     }
