@@ -1,0 +1,14 @@
+pipeline {
+    agent any
+    //「Global Tool Configuration」で設定したnameを指定
+    stages {
+        stage('Backend Deploy to Apache') {
+            steps {
+                sh '''
+                rsync -av backend/ /api/
+                sudo systemctl restart fastapi
+                '''
+            }
+        }
+    }
+}
