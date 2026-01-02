@@ -6,7 +6,7 @@ pipeline {
             steps {
                 sh '''
                 sudo rm -rf /api/*
-                rsync -av --no-owner --no-group backend/ /api/
+                rsync -av --no-owner --no-group --no-times backend/ /api/
                 sudo systemctl restart fastapi
                 '''
             }
