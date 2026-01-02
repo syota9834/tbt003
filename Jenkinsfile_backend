@@ -5,7 +5,7 @@ pipeline {
         stage('Backend Deploy to Apache') {
             steps {
                 sh '''
-                rsync -av backend/ /api/
+                rsync -av --no-owner --no-group backend/ /api/
                 sudo systemctl restart fastapi
                 '''
             }
